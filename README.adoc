@@ -1,0 +1,50 @@
+= BI-PYT
+
+== How to start
+
+. Clone this repository
+. Install link:https://conda.io/en/latest/miniconda.html[Miniconda]
+. In terminal (or conda prompt) go into cloned directory `cd bi-pyt`
+. Install (or update) environment `conda env update`
+. Activate the environment `source activate bipyt`
+. Run jupyter notebook `jupyter notebook`
+. Enjoy programming ;)
+
+== Each laboratory
+
+At the beginning of the laboratory, pull assignments and create a new branch in which you will work. 
+
+. Switch to master branch `git checkout master`
+. Pull assigments `git pull`
+. Create a new branch for laboratory `git checkout -b branch_name`
+. Activate the environment `conda activate bipyt`
+. Run jupyter notebook `jupyter notebook`
+. Enjoy programming ;)
+ 
+
+After the lab, we recommend you to save your code to gitlab.
+
+```
+git status # show changes
+git add your_lab_notebook.ipynb # add file(s) to the staging area
+git commit -m 'Message' # commit the changes to the local repositort
+git push origin branch_name # push changes to remote repository
+```
+
+== Homeworks
+
+There is a separate folder for each homework. New folders will be created for you as new homeworks are assigned.
+
+Each homework has a set of attached unit tests. You can run these tests locally by executing command `pytest` inside of the homework folder. The pytest package has been also added to the conda environment, so run `conda env update` if you don't have the executable installed.
+
+Similar to each laboratory create a **special branch** for each homework and name it `homeworkXX`, where XX is zero padded number of the homework (e.g. homework01). The branch naming is important because of automated testing on Gitlab. If you don't name the branch correctly, tests will not be executed by the CI and the homework solution will not be accepted.
+
+After the homework is finished, commit and push your homework branch to faculty Gitlab. 
+
+On Gitlab, create a Merge request from your branch to master: 
+
+. (Left Menu) Merge Requests -> New merge request
+.. Source branch will be _your repo_ and **homework branch** (eg. homework01).
+.. Target branch will be also _your repo_ and branch **master**.
+. Then click "Compare branches and continue" and "Submit merge request".
+

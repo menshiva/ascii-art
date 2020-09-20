@@ -1,0 +1,39 @@
+image: python:3
+
+stages:
+  - test
+
+test-homework01:
+  stage: test
+  script:
+    - cd homework01
+    - pytest
+  only:
+    - homework01
+
+test-homework02:
+  stage: test
+  script:
+    - cd homework02
+    - pytest
+  only:
+    - homework02
+    
+test-homework03:
+  stage: test
+  script:
+    - cd homework03
+    - pytest
+  only:
+    - homework03
+
+test-homework04:
+  stage: test
+  script:
+    - cd homework04
+    - pytest
+  only:
+    - homework04
+
+before_script:
+  - pip install pytest numpy pillow ipython pandas matplotlib
