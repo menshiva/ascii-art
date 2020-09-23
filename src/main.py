@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtQml import QQmlApplicationEngine
 from PySide2.QtCore import Qt
 from PySide2.QtQuickControls2 import QQuickStyle
-from src.uiConsts import uiConsts
+from src.utils.uiConsts import uiConsts
 
 if __name__ == '__main__':
     os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"

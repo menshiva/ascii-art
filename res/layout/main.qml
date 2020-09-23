@@ -43,44 +43,64 @@ ApplicationWindow {
             }
         }
     }
-    Drawer {
-        id: drawer
-        width: parent.width * 0.32
-        height: parent.height
+    StackLayout {
+        anchors.fill: parent
 
-        ColumnLayout {
-            width: parent.width
-            height: parent.height
-            spacing: 0
+        GroupBox {
+            anchors.fill: parent
+            anchors.margins: 50
+            clip: true
+            title: 'Text Inputs'
 
-            RowLayout {
-                width: parent.width
-                Layout.preferredHeight: 64
-                Layout.leftMargin: 16
-                Layout.rightMargin: 8
-
-                Label {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-                    text: Consts.DrawerTitle
-                    font.pixelSize: 18
-                    font.weight: Font.Bold
-                }
-                RoundButton {
-                    Layout.alignment: Qt.AlignVCenter
-                    flat: true
-                    icon.source: Consts.AddImgButtonImgSrc
-                    ToolTip.visible: hovered
-                    ToolTip.text: Consts.AddImgButtonTooltip
-                }
+            TextArea {
+                //todo
+                objectName: "txt"
+                anchors.fill: parent
+                placeholderText: 'Multi-line text editor...'
+                selectByMouse: true
+                persistentSelection: true
+                //readOnly: true //todo
             }
-            Divider {}
-            //TODO
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignBottom
-                color: "white"
+        }
+        Drawer {
+            id: drawer
+            width: parent.width * 0.32
+            height: parent.height
+
+            ColumnLayout {
+                width: parent.width
+                height: parent.height
+                spacing: 0
+
+                RowLayout {
+                    width: parent.width
+                    Layout.preferredHeight: 64
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 8
+
+                    Label {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
+                        text: Consts.DrawerTitle
+                        font.pixelSize: 18
+                        font.weight: Font.Bold
+                    }
+                    RoundButton {
+                        Layout.alignment: Qt.AlignVCenter
+                        flat: true
+                        icon.source: Consts.AddImgButtonImgSrc
+                        ToolTip.visible: hovered
+                        ToolTip.text: Consts.AddImgButtonTooltip
+                    }
+                }
+                Divider {}
+                //TODO
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignBottom
+                    color: "white"
+                }
             }
         }
     }
