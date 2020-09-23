@@ -14,6 +14,7 @@ if __name__ == '__main__':
 
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("Consts", uiConsts)
-    engine.load("src/view.qml")
+    engine.load("res/layout/main.qml")
+    #engine.load("qml/main.qml") //todo
 
     sys.exit(app.exec_())
