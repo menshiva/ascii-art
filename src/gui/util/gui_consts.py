@@ -17,12 +17,19 @@ uiConsts = {
     "DrawerTitle": "Image list",
     "PlayButtonText": "Play animation",
     "StopButtonText": "Stop animation",
+    "SettingsButtonText": "Settings",
     "AddImgButtonTooltip": "Add image",
+    "SettingsDialogTitle": "Settings",
+    "SettingsDialogSaveButtonText": "Save",
+    "SettingsThemeTitle": "Theme",
+    "SettingsThemeModels": ["Light", "Dark"],
 
     "DrawerButtonImgSrc": "../drawable/menu.svg",
     "PlayButtonImgSrc": "../drawable/play.svg",
     "StopButtonImgSrc": "../drawable/pause.svg",
+    "MoreButtonImgSrc": "../drawable/more.svg",
     "AddImgButtonImgSrc": "../drawable/add_image.svg",
 
-    "DividerColor": "#1E000000"
+    "DividerColor": "#1E000000",
+    "ShadowColor": "#80212121"
 }

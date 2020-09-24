@@ -2,15 +2,24 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
-    Material.theme: Material.Light
+    id: window
+    Material.theme: settings.theme == 0 ? Material.Light : Material.Dark
     Material.primary: Material.Teal
     Material.accent: Material.Red
     minimumWidth: Consts.ApplicationMinWidth
     minimumHeight: Consts.ApplicationMinHeight
     title: Consts.ToolbarTitle
     visible: true
+
+    Settings {
+        id: settings
+        property alias width: window.width
+        property alias height: window.height
+        property int theme: 0
+    }
 
     header: ToolBar {
         Material.foreground: "white"
@@ -43,6 +52,29 @@ ApplicationWindow {
                 icon.source: Consts.StopButtonImgSrc
                 text: Consts.StopButtonText
             }
+            ToolSeparator {}
+            ToolButton {
+                icon.source: Consts.MoreButtonImgSrc
+                onClicked: settingsPopup.open()
+
+                Popup {
+                    id: settingsPopup
+                    x: parent.width - width
+                    y: parent.height
+                    topPadding: 0
+                    bottomPadding: 0
+
+                    contentItem: Button {
+                        flat: true
+                        text: Consts.SettingsButtonText
+                        font.capitalization: Font.MixedCase
+                        onClicked: {
+                            settingsPopup.close()
+                            settingsDialog.open()
+                        }
+                    }
+                }
+            }
         }
     }
     GroupBox {
@@ -63,6 +95,9 @@ ApplicationWindow {
         id: drawer
         width: parent.width * Consts.DrawerWidthCoefficient
         height: parent.height
+        Overlay.modal: Rectangle {
+            color: Consts.ShadowColor
+        }
 
         ColumnLayout {
             width: parent.width
@@ -97,7 +132,45 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignBottom
-                color: "white"
+                color: Material.background
+            }
+        }
+    }
+    Dialog {
+        id: settingsDialog
+        anchors.centerIn: Overlay.overlay
+        title: Consts.SettingsDialogTitle
+        modal: true
+        closePolicy: Popup.NoAutoClose
+        Overlay.modal: Rectangle {
+            color: Consts.ShadowColor
+        }
+        // onAccepted: console.log("Ok clicked") // TODO
+
+        ColumnLayout {
+            // spacing: 0 // TODO
+
+            GroupBox {
+                title: Consts.SettingsThemeTitle
+                clip: true
+                background: null
+
+                ComboBox {
+                    id: themeBox
+                    Material.foreground: parent.Material.foreground
+                    model: Consts.SettingsThemeModels
+                    currentIndex: settings.theme
+                }
+            }
+        }
+        footer: DialogButtonBox {
+            Button {
+                flat: true
+                text: Consts.SettingsDialogSaveButtonText
+                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+                onClicked: {
+                    settings.theme = themeBox.currentIndex
+                }
             }
         }
     }

@@ -1,11 +1,12 @@
 import sys
-from src.ui.ui import UI
+from src.gui.gui import Gui
+
 
 # TODO
-# def func(user_interface: UI):
-#     art_width = user_interface.get_property(ui.artLayout, "width").read()
-#     art_height = user_interface.get_property(ui.artLayout, "height").read()
-#     fm = QFontMetrics(user_interface.get_property(ui.artLayout, "font").read())
+# def func(gui: UI):
+#     art_width = gui.get_property(gui.artLayout, "width").read()
+#     art_height = gui.get_property(gui.artLayout, "height").read()
+#     fm = QFontMetrics(gui.get_property(gui.artLayout, "font").read())
 #
 #     char_width = int(art_width / fm.averageCharWidth())
 #     char_height = int(art_height / fm.height())
@@ -16,13 +17,13 @@ from src.ui.ui import UI
 #             text.append("s")
 #         text.append("\n")
 #
-#     user_interface.get_property(ui.artLayout, "text").write("".join(text))
+#     gui.get_property(gui.artLayout, "text").write("".join(text))
 
 
 def main():
-    ui = UI(sys.argv)
-    # ui.btn.clicked.connect(lambda: func(ui)) # TODO
-    ui.exec()
+    gui = Gui(sys.argv)
+    # gui.btn.clicked.connect(lambda: func(gui))  # TODO
+    gui.exec()
 
 
 if __name__ == '__main__':
