@@ -3,6 +3,6 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     Layout.fillWidth: true
-    height: 1
-    color: "#1E000000"
+    height: Consts.DividerHeight
+    color: Consts.DividerColor
 }

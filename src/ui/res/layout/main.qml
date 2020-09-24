@@ -4,18 +4,18 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
 
 ApplicationWindow {
-    visible: true
-    minimumWidth: 800
-    minimumHeight: 600
-    title: Consts.MainTitle
     Material.theme: Material.Light
     Material.primary: Material.Teal
     Material.accent: Material.Red
+    minimumWidth: Consts.ApplicationMinWidth
+    minimumHeight: Consts.ApplicationMinHeight
+    title: Consts.ToolbarTitle
+    visible: true
 
     header: ToolBar {
-        leftPadding: 8
-        rightPadding: 16
         Material.foreground: "white"
+        leftPadding: Consts.ToolbarPadding
+        rightPadding: Consts.ToolbarPadding
 
         RowLayout {
             anchors.fill: parent
@@ -25,11 +25,12 @@ ApplicationWindow {
                 onClicked: drawer.open()
             }
             Label {
-                leftPadding: 8
+                leftPadding: Consts.ToolbarTitlePadding
+                rightPadding: Consts.ToolbarTitlePadding
                 verticalAlignment: Qt.AlignVCenter
                 Layout.fillWidth: true
-                text: Consts.MainTitle
-                font.pixelSize: 18
+                text: Consts.ToolbarTitle
+                font.pixelSize: Consts.ToolbarTitleFontSize
             }
             ToolButton {
                 enabled: false
@@ -48,16 +49,19 @@ ApplicationWindow {
         implicitWidth: parent.width
         implicitHeight: parent.height
         anchors.fill: parent
-        anchors.margins: 32
+        anchors.margins: Consts.ArtLayoutMargins
         clip: true
 
         Label {
+            objectName: "artLayout"
             anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
     }
     Drawer {
         id: drawer
-        width: parent.width * 0.32
+        width: parent.width * Consts.DrawerWidthCoefficient
         height: parent.height
 
         ColumnLayout {
@@ -67,15 +71,15 @@ ApplicationWindow {
 
             RowLayout {
                 width: parent.width
-                Layout.preferredHeight: 64
-                Layout.leftMargin: 16
-                Layout.rightMargin: 8
+                Layout.preferredHeight: Consts.DrawerTitleHeight
+                Layout.leftMargin: Consts.DrawerTitleLeftMargin
+                Layout.rightMargin: Consts.DrawerTitleRightMargin
 
                 Label {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
                     text: Consts.DrawerTitle
-                    font.pixelSize: 18
+                    font.pixelSize: Consts.DrawerTitleFontSize
                     font.weight: Font.Bold
                 }
                 RoundButton {
@@ -83,7 +87,7 @@ ApplicationWindow {
                     flat: true
                     icon.source: Consts.AddImgButtonImgSrc
                     ToolTip.visible: hovered
-                    ToolTip.delay: 100
+                    ToolTip.delay: Consts.DrawerButtonTooltipDelay
                     ToolTip.text: Consts.AddImgButtonTooltip
                 }
             }

@@ -11,7 +11,7 @@ from src.ui.util.uiConsts import uiConsts
 class UI:
     app: QGuiApplication
     engine: QQmlApplicationEngine
-    root: QObject
+    artLayout: QObject
 
     def __init__(self, argv: List[str]) -> None:
         super().__init__()
@@ -27,14 +27,15 @@ class UI:
 
         if not self.engine.rootObjects():
             sys.exit(-1)
+        self.__init_views()
 
-        self.root = self.engine.rootObjects()[0]
+    def __init_views(self) -> None:
+        root = self.engine.rootObjects()[0]
+        self.artLayout = root.findChild(QObject, "artLayout")
 
-    def find_view(self, object_name: str) -> QObject:
-        return self.root.findChild(QObject, object_name)
-
-    def get_property(self, object_name: str, prop: str) -> QQmlProperty:
-        return QQmlProperty(self.find_view(object_name), prop)
+    @staticmethod
+    def get_property(element: QObject, prop: str) -> QQmlProperty:
+        return QQmlProperty(element, prop)
 
     def exec(self) -> None:
         sys.exit(self.app.exec_())
