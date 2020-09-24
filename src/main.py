@@ -1,20 +1,21 @@
 import sys
-import os
-from PySide2.QtWidgets import QApplication
-from PySide2.QtQml import QQmlApplicationEngine
-from PySide2.QtCore import Qt
-from PySide2.QtQuickControls2 import QQuickStyle
-from src.utils.uiConsts import uiConsts
+from src.ui.ui import UI
+
+# TODO
+# def func(user_interface: UI):
+#    width = user_interface.get_property("txt", "width").read()
+#    print(width)
+
 
 if __name__ == '__main__':
-    os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    QQuickStyle.setStyle("Material")
-    app = QApplication(sys.argv)
+    ui = UI(sys.argv)
 
-    engine = QQmlApplicationEngine()
-    engine.rootContext().setContextProperty("Consts", uiConsts)
-    engine.load("res/layout/main.qml")
-    #engine.load("qml/main.qml") //todo
+    # TODO
+    # button = ui.find_view("btn")
+    # button.clicked.connect(lambda: func(ui))
+    # width = QQmlProperty(txt, "width").read()
+    # print(width)
+    # fm = QFontMetrics(QQmlProperty(txt, "font").read())
+    # print(group_width / fm.averageCharWidth())
 
-    sys.exit(app.exec_())
+    ui.exec()
