@@ -6,9 +6,9 @@ import Qt.labs.settings 1.0
 
 ApplicationWindow {
     id: window
-    Material.theme: settings.theme == 0 ? Material.Light : Material.Dark
+    Material.theme: Material[Consts.SettingsThemeModels[settings.theme]]
     Material.primary: Material.Teal
-    Material.accent: Material.Red
+    Material.accent: Material.Teal
     minimumWidth: Consts.ApplicationMinWidth
     minimumHeight: Consts.ApplicationMinHeight
     title: Consts.ToolbarTitle
@@ -46,7 +46,6 @@ ApplicationWindow {
                 icon.source: Consts.PlayButtonImgSrc
                 text: Consts.PlayButtonText
             }
-            ToolSeparator {}
             ToolButton {
                 enabled: false
                 icon.source: Consts.StopButtonImgSrc
@@ -55,21 +54,17 @@ ApplicationWindow {
             ToolSeparator {}
             ToolButton {
                 icon.source: Consts.MoreButtonImgSrc
-                onClicked: settingsPopup.open()
+                onClicked: settingsMenu.open()
 
-                Popup {
-                    id: settingsPopup
-                    x: parent.width - width
+                Menu {
+                    id: settingsMenu
                     y: parent.height
                     topPadding: 0
                     bottomPadding: 0
 
-                    contentItem: Button {
-                        flat: true
+                    Action {
                         text: Consts.SettingsButtonText
-                        font.capitalization: Font.MixedCase
-                        onClicked: {
-                            settingsPopup.close()
+                        onTriggered: {
                             settingsDialog.open()
                         }
                     }
@@ -122,7 +117,7 @@ ApplicationWindow {
                     flat: true
                     icon.source: Consts.AddImgButtonImgSrc
                     ToolTip.visible: hovered
-                    ToolTip.delay: Consts.DrawerButtonTooltipDelay
+                    ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonTooltip
                 }
             }
@@ -138,6 +133,7 @@ ApplicationWindow {
     }
     Dialog {
         id: settingsDialog
+        width: parent.width * Consts.SettingsDialogWidthCoefficient
         anchors.centerIn: Overlay.overlay
         title: Consts.SettingsDialogTitle
         modal: true
@@ -145,21 +141,61 @@ ApplicationWindow {
         Overlay.modal: Rectangle {
             color: Consts.ShadowColor
         }
-        // onAccepted: console.log("Ok clicked") // TODO
 
         ColumnLayout {
-            // spacing: 0 // TODO
+            anchors.fill: parent
+            spacing: Consts.SettingsDialogItemSpacing
 
             GroupBox {
+                Layout.fillWidth: true
                 title: Consts.SettingsThemeTitle
                 clip: true
-                background: null
 
                 ComboBox {
                     id: themeBox
+                    width: parent.width
+                    flat: true
                     Material.foreground: parent.Material.foreground
                     model: Consts.SettingsThemeModels
                     currentIndex: settings.theme
+                }
+            }
+            GroupBox {
+                Layout.fillWidth: true
+                clip: true
+
+                label: RowLayout {
+                    Label {
+                        Layout.leftMargin: 8
+                        text: Consts.SettingsGSLevelTitle
+                    }
+                    Image {
+                        id: helpImg
+                        source: Consts.SettingsIconHelp
+                        sourceSize.width: Consts.SettingsDialogHelpImageSize
+                        sourceSize.height: Consts.SettingsDialogHelpImageSize
+                        //ToolTip.visible: ma.containsMouse
+                        //ToolTip.delay: Consts.TooltipDelay
+                        //ToolTip.text: Consts.SettingsGSLevelTooltip
+
+                        MouseArea {
+                            id: ma
+                            anchors.fill: parent
+                            hoverEnabled: true
+                        }
+                        ToolTip {
+                            parent: helpImg
+                            visible: ma.containsMouse
+                            text: Consts.SettingsGSLevelTooltip
+                            delay: Consts.TooltipDelay
+                        }
+                    }
+                }
+                TextField {
+                    id: grayscaleBox
+                    width: parent.width
+                    placeholderText: "Enter something here..."  // TODO
+                    selectByMouse: true
                 }
             }
         }
@@ -170,6 +206,15 @@ ApplicationWindow {
                 DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
                 onClicked: {
                     settings.theme = themeBox.currentIndex
+                }
+            }
+            Button {
+                flat: true
+                text: Consts.SettingsDialogCancelButtonText
+                DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
+                onClicked: {
+                    themeBox.currentIndex = settings.theme
+                    settingsDialog.close()
                 }
             }
         }
