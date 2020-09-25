@@ -3,7 +3,10 @@ from src.gui.gui import Gui
 
 
 # TODO
-# def func(gui: UI):
+# def func(gui: Gui):
+#     models: List[str] = gui.get_property(gui.artList, "model").read()
+#     models.append("gav")
+#     gui.get_property(gui.artList, "model").write(models)
 #     art_width = gui.get_property(gui.artLayout, "width").read()
 #     art_height = gui.get_property(gui.artLayout, "height").read()
 #     fm = QFontMetrics(gui.get_property(gui.artLayout, "font").read())

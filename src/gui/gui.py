@@ -12,8 +12,10 @@ class Gui:
     app: QApplication
     engine: QQmlApplicationEngine
     root: QObject
-    # btn: QObject  # TODO
     artLayout: QObject
+    artList: QObject
+    addImageBtn: QObject
+    artItemIcon: QObject
 
     def __init__(self, argv: List[str]) -> None:
         super().__init__()
@@ -36,8 +38,10 @@ class Gui:
 
     def __init_views(self) -> None:
         self.root = self.engine.rootObjects()[0]
-        # self.btn = self.root.findChild(QObject, "btn")  # TODO
         self.artLayout = self.root.findChild(QObject, "artLayout")
+        self.artList = self.root.findChild(QObject, "artList")
+        self.addImageBtn = self.root.findChild(QObject, "addImageBtn")
+        self.artItemIcon = self.root.findChild(QObject, "artItemIcon")
 
     @staticmethod
     def get_property(element: QObject, prop: str) -> QQmlProperty:

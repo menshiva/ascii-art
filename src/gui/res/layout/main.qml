@@ -35,8 +35,6 @@ ApplicationWindow {
             }
             Label {
                 leftPadding: Consts.ToolbarTitlePadding
-                rightPadding: Consts.ToolbarTitlePadding
-                verticalAlignment: Qt.AlignVCenter
                 Layout.fillWidth: true
                 text: Consts.ToolbarTitle
                 font.pixelSize: Consts.ToolbarTitleFontSize
@@ -99,35 +97,72 @@ ApplicationWindow {
             height: parent.height
             spacing: 0
 
-            RowLayout {
-                width: parent.width
-                Layout.preferredHeight: Consts.DrawerTitleHeight
-                Layout.leftMargin: Consts.DrawerTitleLeftMargin
-                Layout.rightMargin: Consts.DrawerTitleRightMargin
+            ToolBar {
+                Material.foreground: Material.foreground
+                Material.background: Material.background
+                Layout.fillWidth: true
+                leftPadding: Consts.ToolbarPadding
+                rightPadding: Consts.ToolbarPadding
 
-                Label {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-                    text: Consts.DrawerTitle
-                    font.pixelSize: Consts.DrawerTitleFontSize
-                    font.weight: Font.Bold
-                }
-                RoundButton {
-                    Layout.alignment: Qt.AlignVCenter
-                    flat: true
-                    icon.source: Consts.AddImgButtonImgSrc
-                    ToolTip.visible: hovered
-                    ToolTip.delay: Consts.TooltipDelay
-                    ToolTip.text: Consts.AddImgButtonTooltip
+                RowLayout {
+                    anchors.fill: parent
+
+                    Label {
+                        leftPadding: Consts.ToolbarTitlePadding
+                        Layout.fillWidth: true
+                        text: Consts.DrawerTitle
+                        font.pixelSize: Consts.DrawerTitleFontSize
+                        font.weight: Font.Bold
+                    }
+                    ToolButton {
+                        objectName: "addImageBtn"
+                        icon.source: Consts.AddImgButtonImgSrc
+                        ToolTip.visible: hovered
+                        ToolTip.delay: Consts.TooltipDelay
+                        ToolTip.text: Consts.AddImgButtonTooltip
+                        onClicked: drawer.close()
+                    }
                 }
             }
-            Divider {}
-            // TODO
-            Rectangle {
+            ListView {
+                id: artList
+                objectName: "artList"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.alignment: Qt.AlignBottom
-                color: Material.background
+                clip: true
+                model: ["kekhguyguyguyguyguyguyguyguguytfytf", "lol"]  // TODO
+
+                delegate: ItemDelegate {
+                    width: artList.width
+                    height: Consts.ArtListItemHeight
+                    leftPadding: Consts.ArtListItemImageWidth + Consts.ArtListItemTextPadding
+                    rightPadding: artItemIcon.width + Consts.ArtListItemIconPadding
+                    text: modelData
+                    font.pixelSize: Consts.ArtListItemTextFontSize
+                    highlighted: ListView.isCurrentItem
+                    onClicked: {
+                        artList.currentIndex = index
+                        drawer.close()
+                    }
+
+                    Image {
+                        width: Consts.ArtListItemImageWidth
+                        height: Consts.ArtListItemImageHeight
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: "../drawable/test.jpg"
+                    }
+                    RoundButton {
+                        id: artItemIcon
+                        objectName: "artItemIcon"
+                        anchors.rightMargin: Consts.ArtListItemIconPadding
+                        flat: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        icon.source: Consts.ArtListInfoImgSrc
+                        onClicked: drawer.close()
+                    }
+                }
+                ScrollIndicator.vertical: ScrollIndicator { }
             }
         }
     }
@@ -171,23 +206,17 @@ ApplicationWindow {
                     }
                     Image {
                         id: helpImg
-                        source: Consts.SettingsIconHelp
+                        source: Consts.SettingsIconHelpSrc
                         sourceSize.width: Consts.SettingsDialogHelpImageSize
                         sourceSize.height: Consts.SettingsDialogHelpImageSize
-                        //ToolTip.visible: ma.containsMouse
-                        //ToolTip.delay: Consts.TooltipDelay
-                        //ToolTip.text: Consts.SettingsGSLevelTooltip
+                        ToolTip.visible: ma.containsMouse
+                        ToolTip.delay: Consts.TooltipDelay
+                        ToolTip.text: Consts.SettingsGSLevelTooltip
 
                         MouseArea {
                             id: ma
                             anchors.fill: parent
                             hoverEnabled: true
-                        }
-                        ToolTip {
-                            parent: helpImg
-                            visible: ma.containsMouse
-                            text: Consts.SettingsGSLevelTooltip
-                            delay: Consts.TooltipDelay
                         }
                     }
                 }
