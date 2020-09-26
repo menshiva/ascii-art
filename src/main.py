@@ -4,9 +4,6 @@ from src.gui.gui import Gui
 
 # TODO
 # def func(gui: Gui):
-#     models: List[str] = gui.get_property(gui.artList, "model").read()
-#     models.append("gav")
-#     gui.get_property(gui.artList, "model").write(models)
 #     art_width = gui.get_property(gui.artLayout, "width").read()
 #     art_height = gui.get_property(gui.artLayout, "height").read()
 #     fm = QFontMetrics(gui.get_property(gui.artLayout, "font").read())
@@ -23,9 +20,13 @@ from src.gui.gui import Gui
 #     gui.get_property(gui.artLayout, "text").write("".join(text))
 
 
+def add_art(gui: Gui) -> None:
+    gui.artModels.add_person("sosi zopu")
+
+
 def main():
     gui = Gui(sys.argv)
-    # gui.btn.clicked.connect(lambda: func(gui))  # TODO
+    gui.addImageBtn.clicked.connect(lambda: add_art(gui))
     gui.exec()
 
 
