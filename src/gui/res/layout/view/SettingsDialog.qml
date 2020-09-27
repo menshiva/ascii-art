@@ -5,14 +5,12 @@ import QtQuick.Controls.Material 2.15
 import QtGraphicalEffects 1.15
 
 Dialog {
-    width: Consts.SettingsDialogWidth
+    width: parent.width * Consts.DialogWidthCoefficient
     anchors.centerIn: Overlay.overlay
     title: Consts.SettingsButtonText
     modal: true
     closePolicy: Popup.NoAutoClose
-    Overlay.modal: Rectangle {
-        color: Consts.ShadowColor
-    }
+    Overlay.modal: Rectangle { color: Consts.ShadowColor }
 
     ColumnLayout {
         anchors.fill: parent
@@ -80,12 +78,11 @@ Dialog {
         }
         Button {
             flat: true
-            text: Consts.SettingsDialogCancelButtonText
-            DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
+            text: Consts.DialogCancelButtonText
+            DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
             onClicked: {
                 themeBox.currentIndex = settings.theme
                 grayscaleBox.text = settings.grayscale
-                settingsDialog.close()
             }
         }
     }

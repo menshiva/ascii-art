@@ -1,5 +1,5 @@
-import sys
-from src.gui.gui import Gui
+from src.gui.Gui import Gui
+from src.image.Image import Image
 
 
 # TODO
@@ -21,12 +21,22 @@ from src.gui.gui import Gui
 
 
 def add_art(gui: Gui) -> None:
-    gui.artModels.add_person("sosi zopu")
+    art_name = gui.get_property(gui.addImageDialogNameBox, "text").read()
+    art_path = gui.get_property(gui.addImageDialogPathBox, "text").read()
+    gui.artModels.add_art(Image(art_name, art_path))
+    gui.get_property(gui.addImageDialogNameBox, "text").write("")
+    gui.get_property(gui.addImageDialogPathBox, "text").write("")
+
+
+def browse_art(gui: Gui) -> None:
+    file_path: str = gui.browse_files()
+    gui.get_property(gui.addImageDialogPathBox, "text").write(file_path)
 
 
 def main():
-    gui = Gui(sys.argv)
+    gui = Gui()
     gui.addImageBtn.clicked.connect(lambda: add_art(gui))
+    gui.addImageDialogBrowseBtn.clicked.connect(lambda: browse_art(gui))
     gui.exec()
 
 

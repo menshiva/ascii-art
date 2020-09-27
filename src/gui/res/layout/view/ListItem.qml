@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
 
 Pane {
-    objectName: "artListItem"
+    //objectName: "artListItem"  TODO
     width: parent.width
     height: Consts.ArtListItemHeight
     Material.elevation: Consts.ArtListItemElevation
@@ -15,11 +15,12 @@ Pane {
         width: parent.width
         height: Consts.ArtListItemImageHeight
         fillMode: Image.PreserveAspectCrop
-        source: "../../drawable/test2.jpg"  // TODO
+        source: path
     }
     ItemDelegate {
         anchors.fill: parent
         onClicked: {
+            // TODO
             drawer.close()
         }
     }
@@ -34,7 +35,7 @@ Pane {
             Layout.fillWidth: parent
             Layout.fillHeight: parent
             verticalAlignment: Text.AlignVCenter
-            text: name  // TODO
+            text: name
             elide: Text.ElideRight
             font.pixelSize: Consts.ArtListItemFontSize
         }
@@ -52,13 +53,14 @@ Pane {
 
                 Action {
                     text: Consts.ArtListItemPropertiesBtn
-                    onTriggered: { drawer.close() }
+                    onTriggered: {
+                        // TODO
+                        drawer.close()
+                    }
                 }
                 Action {
                     text: Consts.ArtListItemRemoveBtn
-                    onTriggered: {
-                        ArtModels.delete_person(index)
-                    }
+                    onTriggered: ArtModels.delete_art(index)
                 }
             }
         }

@@ -21,13 +21,13 @@ ToolBar {
             font.pixelSize: Consts.ToolbarTitleFontSize
         }
         ToolButton {
-            objectName: "playAnimBtn"
+            //objectName: "playAnimBtn"  TODO
             enabled: false
             icon.source: Consts.PlayButtonImgSrc
             text: Consts.PlayButtonText
         }
         ToolButton {
-            objectName: "stopAnimBtn"
+            //objectName: "stopAnimBtn"  TODO
             enabled: false
             icon.source: Consts.StopButtonImgSrc
             text: Consts.StopButtonText
@@ -45,9 +45,7 @@ ToolBar {
 
                 Action {
                     text: Consts.SettingsButtonText
-                    onTriggered: {
-                        settingsDialog.open()
-                    }
+                    onTriggered: settingsDialog.open()
                 }
             }
         }

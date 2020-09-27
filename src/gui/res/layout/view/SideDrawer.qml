@@ -4,11 +4,9 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
 
 Drawer {
-    width: Consts.DrawerWidth
+    width: parent.width * Consts.DrawerWidthCoefficient
     height: parent.height
-    Overlay.modal: Rectangle {
-        color: Consts.ShadowColor
-    }
+    Overlay.modal: Rectangle { color: Consts.ShadowColor }
 
     ColumnLayout {
         width: parent.width
@@ -34,18 +32,16 @@ Drawer {
                     font.weight: Font.Bold
                 }
                 ToolButton {
-                    objectName: "addImageBtn"
                     icon.source: Consts.AddImgButtonImgSrc
                     ToolTip.visible: hovered
                     ToolTip.delay: Consts.TooltipDelay
-                    ToolTip.text: Consts.AddImgButtonTooltip
-                    //onClicked: drawer.close()  TODO
+                    ToolTip.text: Consts.AddImgButtonText
+                    onClicked: addImageDialog.open()
                 }
             }
         }
         ListView {
-            id: artList
-            objectName: "artList"
+            //objectName: "artList"  TODO
             Layout.fillWidth: true
             Layout.fillHeight: true
             leftMargin: Consts.ArtListItemMargin
@@ -58,26 +54,31 @@ Drawer {
             add: Transition {
                 ParallelAnimation {
                     NumberAnimation {
-                        property: "opacity"; from: 0; to: 1.0; duration: Consts.ArtListItemAnimationDuration
+                        property: "opacity"; from: 0; to: 1.0;
+                        duration: Consts.ArtListItemAnimationDuration
                     }
                     NumberAnimation {
-                        property: "scale"; from: 0; to: 1.0; duration: Consts.ArtListItemAnimationDuration
+                        property: "scale"; from: 0; to: 1.0;
+                        duration: Consts.ArtListItemAnimationDuration
                     }
                 }
             }
             remove: Transition {
                 ParallelAnimation {
                     NumberAnimation {
-                        property: "opacity"; to: 0; duration: Consts.ArtListItemAnimationDuration
+                        property: "opacity"; to: 0;
+                        duration: Consts.ArtListItemAnimationDuration
                     }
                     NumberAnimation {
-                        property: "scale"; to: 0; duration: Consts.ArtListItemAnimationDuration
+                        property: "scale"; to: 0;
+                        duration: Consts.ArtListItemAnimationDuration
                     }
                 }
             }
             displaced: Transition {
                 NumberAnimation {
-                    properties: "x,y"; duration: Consts.ArtListItemAnimationDuration
+                    properties: "x, y";
+                    duration: Consts.ArtListItemAnimationDuration
                 }
             }
             removeDisplaced: displaced

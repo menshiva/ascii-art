@@ -16,7 +16,7 @@ ApplicationWindow {
 
     Settings {
         id: settings
-        objectName: "settings"
+        //objectName: "settings"  TODO
         property alias width: window.width
         property alias height: window.height
         property int theme: 0
@@ -29,16 +29,13 @@ ApplicationWindow {
         anchors.margins: Consts.ArtLayoutMargins
 
         Label {
-            objectName: "artLayout"
+            //objectName: "artLayout"  TODO
             anchors.fill: parent
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
     }
-    SideDrawer {
-        id: drawer
-    }
-    SettingsDialog {
-        id: settingsDialog
-    }
+    SideDrawer { id: drawer }
+    AddImageDialog { id: addImageDialog }
+    SettingsDialog { id: settingsDialog }
 }
