@@ -3,64 +3,71 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
 
-Pane {
-    //objectName: "artListItem"  TODO
-    width: parent.width
+Item {
+    required property int index
+    required property string name
+    required property string path
+    id: artListItem
+    width: ListView.view.width
     height: Consts.ArtListItemHeight
-    Material.elevation: Consts.ArtListItemElevation
-    padding: 0
 
-    Image {
-        id: artListItemImg
-        width: parent.width
-        height: Consts.ArtListItemImageHeight
-        fillMode: Image.PreserveAspectCrop
-        source: path
-    }
-    ItemDelegate {
+    Pane {
         anchors.fill: parent
-        onClicked: {
-            // TODO
-            drawer.close()
+        anchors.leftMargin: Consts.ArtListItemMargin
+        anchors.rightMargin: anchors.leftMargin
+        Material.elevation: Consts.ArtListItemElevation
+        padding: 0
+
+        Image {
+            id: artListItemImg
+            width: parent.width
+            height: Consts.ArtListItemImageHeight
+            fillMode: Image.PreserveAspectCrop
+            source: path
         }
-    }
-    RowLayout {
-        anchors.top: artListItemImg.bottom
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 16
-
-        Label {
-            Layout.fillWidth: parent
-            Layout.fillHeight: parent
-            verticalAlignment: Text.AlignVCenter
-            text: name
-            elide: Text.ElideRight
-            font.pixelSize: Consts.ArtListItemFontSize
+        ItemDelegate {
+            anchors.fill: parent
+            highlighted: artListItem.ListView.isCurrentItem
+            onClicked: {
+                artList.currentIndex = index
+                drawer.close()
+            }
         }
-        RoundButton {
-            Layout.fillHeight: parent
-            flat: true
-            icon.source: Consts.ArtListInfoImgSrc
-            onClicked: listItemMenu.open()
+        RowLayout {
+            anchors.top: artListItemImg.bottom
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 16
 
-            Menu {
-                id: listItemMenu
-                y: parent.height
-                topPadding: 0
-                bottomPadding: topPadding
+            Label {
+                Layout.fillWidth: parent
+                Layout.fillHeight: parent
+                verticalAlignment: Text.AlignVCenter
+                text: name
+                elide: Text.ElideRight
+                font.pixelSize: Consts.ArtListItemFontSize
+            }
+            RoundButton {
+                Layout.fillHeight: parent
+                flat: true
+                icon.source: Consts.ArtListInfoImgSrc
+                onClicked: listItemMenu.open()
 
-                Action {
-                    text: Consts.ArtListItemPropertiesBtn
-                    onTriggered: {
-                        // TODO
-                        drawer.close()
+                Menu {
+                    id: listItemMenu
+                    y: parent.height
+                    topPadding: 0
+                    bottomPadding: topPadding
+
+                    Action {
+                        text: Consts.ArtListItemPropertiesBtn
+                        onTriggered: addImageDialog.openDialog(index, name, path)
                     }
-                }
-                Action {
-                    text: Consts.ArtListItemRemoveBtn
-                    onTriggered: ArtModels.delete_art(index)
+                    Action {
+                        text: Consts.ArtListItemRemoveBtn
+                        onTriggered: ArtModels.delete_art(index)
+                    }
                 }
             }
         }

@@ -15,8 +15,8 @@ ToolBar {
             onClicked: drawer.open()
         }
         Label {
-            leftPadding: Consts.ToolbarTitlePadding
             Layout.fillWidth: true
+            leftPadding: Consts.ToolbarTitlePadding
             text: Consts.ToolbarTitle
             font.pixelSize: Consts.ToolbarTitleFontSize
         }

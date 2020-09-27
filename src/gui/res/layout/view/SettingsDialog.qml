@@ -14,7 +14,7 @@ Dialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Consts.SettingsDialogItemSpacing
+        spacing: Consts.DialogItemSpacing
 
         GroupBox {
             Layout.fillWidth: true

@@ -14,13 +14,13 @@ class Gui:
     engine: QQmlApplicationEngine
     artModels: ArtModels
     root: QObject
-    addImageBtn: QObject
-    addImageDialogNameBox: QObject
+    # artList: QObject
+    # addImageBtn: QObject
+    # addImageDialogNameBox: QObject
     addImageDialogPathBox: QObject
     addImageDialogBrowseBtn: QObject
     # TODO
     # artLayout: QObject
-    # artList: QObject
     # artListItem: QObject
     # playAnimBtn: QObject
     # stopAnimBtn: QObject
@@ -49,13 +49,13 @@ class Gui:
 
     def __init_views(self) -> None:
         self.root = self.engine.rootObjects()[0]
-        self.addImageBtn = self.root.findChild(QObject, "addImageBtn")
-        self.addImageDialogNameBox = self.root.findChild(QObject, "addImageDialogNameBox")
+        # self.artList = self.root.findChild(QObject, "artList")
+        # self.addImageBtn = self.root.findChild(QObject, "addImageBtn")
+        # self.addImageDialogNameBox = self.root.findChild(QObject, "addImageDialogNameBox")
         self.addImageDialogPathBox = self.root.findChild(QObject, "addImageDialogPathBox")
         self.addImageDialogBrowseBtn = self.root.findChild(QObject, "addImageDialogBrowseBtn")
         # TODO
         # self.artLayout = self.root.findChild(QObject, "artLayout")
-        # self.artList = self.root.findChild(QObject, "artList")
         # self.artListItem = self.root.findChild(QObject, "artListItem")
         # self.playAnimBtn = self.root.findChild(QObject, "playAnimBtn")
         # self.stopAnimBtn = self.root.findChild(QObject, "stopAnimBtn")

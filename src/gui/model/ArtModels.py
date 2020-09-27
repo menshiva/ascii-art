@@ -12,7 +12,11 @@ class ArtModels(QAbstractListModel):
         super().__init__(parent)
         self.textRole = Qt.DisplayRole
         self.imgRole = Qt.DecorationRole
-        self.arts = []
+        self.arts = [  # TODO
+            Image("vlad lox", "/run/user/1000/doc/de44aa83/photo_2020-09-27_20-37-29.jpg"),
+            Image("misa", "/run/user/1000/doc/45de00f0/photo_2020-09-27_15-32-33.jpg"),
+            Image("egor huj s gor", "/run/user/1000/doc/54ed4330/test2.jpg")
+        ]
 
     def data(self, index, role=Qt.DisplayRole) -> str:
         row = index.row()
@@ -30,14 +34,16 @@ class ArtModels(QAbstractListModel):
             self.imgRole: b"path"
         }
 
-    def add_art(self, art: Image) -> None:
+    @Slot(str, str)
+    def add_art(self, name: str, path: str) -> None:
         self.beginInsertRows(QModelIndex(), 0, 0)
-        self.arts.insert(0, art)
+        self.arts.insert(0, Image(name, path))
         self.endInsertRows()
 
-    def edit_art(self, row: int, art: Image) -> None:
+    @Slot(int, str, str)
+    def edit_art(self, row: int, name: str, path: str) -> None:
         ix = self.index(row)
-        self.arts[row] = art
+        self.arts[row] = Image(name, path)
         self.dataChanged.emit(ix, ix, self.roleNames())
 
     @Slot(int)

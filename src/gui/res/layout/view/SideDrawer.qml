@@ -25,28 +25,28 @@ Drawer {
                 anchors.fill: parent
 
                 Label {
-                    leftPadding: Consts.ToolbarTitlePadding
                     Layout.fillWidth: true
+                    leftPadding: Consts.ToolbarTitlePadding
                     text: Consts.DrawerTitle
                     font.pixelSize: Consts.DrawerTitleFontSize
-                    font.weight: Font.Bold
+                    font.bold: true
                 }
                 ToolButton {
                     icon.source: Consts.AddImgButtonImgSrc
                     ToolTip.visible: hovered
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonText
-                    onClicked: addImageDialog.open()
+                    onClicked: addImageDialog.openDialog(-1, "", "")
                 }
             }
         }
         ListView {
-            //objectName: "artList"  TODO
+            id: artList
+            //objectName: "artList"  //TODO
             Layout.fillWidth: true
             Layout.fillHeight: true
-            leftMargin: Consts.ArtListItemMargin
-            rightMargin: leftMargin
-            spacing: leftMargin
+            Layout.bottomMargin: Consts.ArtListItemMargin
+            spacing: Consts.ArtListItemMargin
             model: ArtModels
 
             delegate: ListItem {}

@@ -20,12 +20,12 @@ from src.image.Image import Image
 #     gui.get_property(gui.artLayout, "text").write("".join(text))
 
 
-def add_art(gui: Gui) -> None:
-    art_name = gui.get_property(gui.addImageDialogNameBox, "text").read()
-    art_path = gui.get_property(gui.addImageDialogPathBox, "text").read()
-    gui.artModels.add_art(Image(art_name, art_path))
-    gui.get_property(gui.addImageDialogNameBox, "text").write("")
-    gui.get_property(gui.addImageDialogPathBox, "text").write("")
+# def add_art(gui: Gui) -> None:
+#     art_name = gui.get_property(gui.addImageDialogNameBox, "text").read()
+#     art_path = gui.get_property(gui.addImageDialogPathBox, "text").read()
+#     gui.artModels.add_art(Image(art_name, art_path))
+#     gui.get_property(gui.addImageDialogNameBox, "text").write("")
+#     gui.get_property(gui.addImageDialogPathBox, "text").write("")
 
 
 def browse_art(gui: Gui) -> None:
@@ -33,10 +33,17 @@ def browse_art(gui: Gui) -> None:
     gui.get_property(gui.addImageDialogPathBox, "text").write(file_path)
 
 
+# TODO
+# def display_art(gui: Gui):
+#     current_item = gui.get_property(gui.artList, "currentIndex").read()
+#     print(current_item)
+
+
 def main():
     gui = Gui()
-    gui.addImageBtn.clicked.connect(lambda: add_art(gui))
+    # gui.addImageBtn.clicked.connect(lambda: add_art(gui))
     gui.addImageDialogBrowseBtn.clicked.connect(lambda: browse_art(gui))
+    # gui.artList.currentItemChanged.connect(lambda: display_art(gui))
     gui.exec()
 
 

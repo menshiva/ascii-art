@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Dialog {
+    property int itemIndex: -1
     width: parent.width * Consts.DialogWidthCoefficient
     anchors.centerIn: Overlay.overlay
     title: Consts.AddImgButtonText
@@ -12,14 +13,13 @@ Dialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Consts.SettingsDialogItemSpacing
+        spacing: Consts.DialogItemSpacing
 
         Frame {
             Layout.fillWidth: true
 
             TextField {
                 id: addImageDialogNameBox
-                objectName: "addImageDialogNameBox"
                 width: parent.width
                 placeholderText: Consts.AddImageDialogNameTitle
                 selectByMouse: true
@@ -51,6 +51,7 @@ Dialog {
                     objectName: "addImageDialogBrowseBtn"
                     text: Consts.AddImageDialogBrowseBtn
                     highlighted: true
+                    enabled: itemIndex == -1
                 }
             }
         }
@@ -58,20 +59,33 @@ Dialog {
     footer: DialogButtonBox {
         Button {
             id: addImageBtn
-            objectName: "addImageBtn"
             enabled: false
             flat: true
-            text: Consts.AddImageDialogAddBtn
+            text: itemIndex == -1 ? Consts.AddImageDialogAddBtn : Consts.AddImageDialogSaveBtn
             DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
+            onClicked: {
+                if (itemIndex == -1) {
+                    ArtModels.add_art(addImageDialogNameBox.text, addImageDialogPathBox.text)
+                    addImageDialogNameBox.text = ""
+                    addImageDialogPathBox.text = ""
+                }
+                else {
+                    ArtModels.edit_art(itemIndex, addImageDialogNameBox.text, addImageDialogPathBox.text)
+                    addImageDialog.close()
+                }
+            }
         }
         Button {
             flat: true
             text: Consts.DialogCancelButtonText
             DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
-            onClicked: {
-                addImageDialogNameBox.text = ""
-                addImageDialogPathBox.text = ""
-            }
         }
+    }
+
+    function openDialog(index, name, path) {
+        itemIndex = index
+        addImageDialogNameBox.text = name
+        addImageDialogPathBox.text = path
+        open()
     }
 }
