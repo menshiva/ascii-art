@@ -36,7 +36,7 @@ Drawer {
                     ToolTip.visible: hovered
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonText
-                    onClicked: addImageDialog.openDialog(-1, "", "")
+                    onClicked: addImageDialog.openDialog(-1, "", "", true, false, false)
                 }
             }
         }

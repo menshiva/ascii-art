@@ -34,14 +34,16 @@ class ArtModels(QAbstractListModel):
             self.imgRole: b"path"
         }
 
-    @Slot(str, str)
-    def add_art(self, name: str, path: str) -> None:
+    # TODO effects
+    @Slot(str, str, bool, bool, bool)
+    def add_art(self, name: str, path: str, contrast: bool, negative: bool, convolution: bool) -> None:
         self.beginInsertRows(QModelIndex(), 0, 0)
         self.arts.insert(0, Image(name, path))
         self.endInsertRows()
 
-    @Slot(int, str, str)
-    def edit_art(self, row: int, name: str, path: str) -> None:
+    # TODO effects
+    @Slot(int, str, str, bool, bool, bool)
+    def edit_art(self, row: int, name: str, path: str, contrast: bool, negative: bool, convolution: bool) -> None:
         ix = self.index(row)
         self.arts[row] = Image(name, path)
         self.dataChanged.emit(ix, ix, self.roleNames())

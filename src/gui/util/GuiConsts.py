@@ -8,8 +8,10 @@ uiConsts = {
     "DrawerWidthCoefficient": 0.25,
     "DrawerTitleFontSize": 18,
     "DialogWidthCoefficient": 0.44,
-    "DialogItemSpacing": 16,
-    "SettingsDialogHelpImageSize": 16,
+    "AddImageDialogWidthCoefficient": 0.55,
+    "DialogItemSpacingVert": 32,
+    "DialogItemSpacingHoriz": 16,
+    "DialogHelpImageSize": 16,
     "TooltipDelay": 100,
     "ArtListItemHeight": 180,
     "ArtListItemElevation": 3,
@@ -26,6 +28,10 @@ uiConsts = {
     "StopButtonText": "Stop animation",
     "SettingsButtonText": "Settings",
     "AddImgButtonText": "Add image",
+    "AddImgEffectsText": "Image effects",
+    "AddImgContrastEffectText": "Contrast",
+    "AddImgNegativeEffectText": "Negative",
+    "AddImgConvolutionEffectText": "Convolution",
     "ArtListItemPropertiesBtn": "Properties",
     "ArtListItemRemoveBtn": "Remove image",
     "AddImageDialogNameTitle": "Art name",
@@ -41,6 +47,7 @@ uiConsts = {
     "SettingsGSLevelTooltip": "Enter sequence of symbols from darkest to lightest. "
                               "Your ASCII art will be shown by these symbols. "
                               "(Leave the field empty to use the default grayscale level)",
+    "AddImageDialogRequiredTootlip": "Required field",
 
     "DrawerButtonImgSrc": "../../drawable/menu.svg",
     "PlayButtonImgSrc": "../../drawable/play.svg",
@@ -48,6 +55,7 @@ uiConsts = {
     "MoreButtonImgSrc": "../../drawable/more.svg",
     "AddImgButtonImgSrc": "../../drawable/add_image.svg",
     "SettingsIconHelpSrc": "../../drawable/help.svg",
+    "AddImageIconRequiredSrc": "../../drawable/warning.svg",
     "ArtListInfoImgSrc": "../../drawable/more.svg",
 
     "ShadowColor": "#80212121"

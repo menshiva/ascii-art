@@ -14,7 +14,7 @@ Dialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Consts.DialogItemSpacing
+        spacing: Consts.DialogItemSpacingHoriz
 
         GroupBox {
             Layout.fillWidth: true
@@ -39,8 +39,8 @@ Dialog {
                 }
                 Image {
                     source: Consts.SettingsIconHelpSrc
-                    sourceSize.width: Consts.SettingsDialogHelpImageSize
-                    sourceSize.height: Consts.SettingsDialogHelpImageSize
+                    sourceSize.width: Consts.DialogHelpImageSize
+                    sourceSize.height: Consts.DialogHelpImageSize
                     ToolTip.visible: ma.containsMouse
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.SettingsGSLevelTooltip
