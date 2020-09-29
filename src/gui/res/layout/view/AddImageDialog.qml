@@ -141,7 +141,7 @@ Dialog {
             DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
             onClicked: {
                 if (itemIndex == -1) {
-                    ArtModels.add_art(
+                    ArtFactory.add_art(
                         addImageDialogNameBox.text,
                         addImageDialogPathBox.text,
                         contrastEffect.checked,
@@ -152,10 +152,9 @@ Dialog {
                     addImageDialogPathBox.text = ""
                 }
                 else {
-                    ArtModels.edit_art(
+                    ArtFactory.edit_art(
                         itemIndex,
                         addImageDialogNameBox.text,
-                        addImageDialogPathBox.text,
                         contrastEffect.checked,
                         negativeEffect.checked,
                         convolutionEffect.checked

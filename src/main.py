@@ -1,4 +1,5 @@
 from src.gui.Gui import Gui
+from src.factory.ArtFactory import ArtFactory
 
 
 # TODO
@@ -20,8 +21,7 @@ from src.gui.Gui import Gui
 
 
 def browse_art(gui: Gui) -> None:
-    file_path: str = gui.browse_files()
-    gui.get_property(gui.addImageDialogPathBox, "text").write(file_path)
+    gui.get_property(gui.addImageDialogPathBox, "text").write(gui.browse_files())
 
 
 # TODO
@@ -31,7 +31,18 @@ def browse_art(gui: Gui) -> None:
 
 
 def main():
-    gui = Gui()
+    art_factory = ArtFactory()
+    art_factory.add_art(
+        "vlad", "/run/user/1000/doc/de44aa83/photo_2020-09-27_20-37-29.jpg", False, False, False
+    )
+    art_factory.add_art(
+        "misa", "/run/user/1000/doc/45de00f0/photo_2020-09-27_15-32-33.jpg", True, False, True
+    )
+    art_factory.add_art(
+        "egor", "/run/user/1000/doc/54ed4330/test2.jpg", True, True, False
+    )
+
+    gui = Gui(art_factory)
     gui.addImageDialogBrowseBtn.clicked.connect(lambda: browse_art(gui))
     # gui.artList.currentItemChanged.connect(lambda: display_art(gui))
     gui.exec()

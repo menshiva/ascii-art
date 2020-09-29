@@ -47,7 +47,7 @@ Drawer {
             Layout.fillHeight: true
             Layout.bottomMargin: Consts.ArtListItemMargin
             spacing: Consts.ArtListItemMargin
-            model: ArtModels
+            model: ArtFactory
 
             delegate: ListItem {}
             ScrollIndicator.vertical: ScrollIndicator {}
