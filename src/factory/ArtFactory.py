@@ -1,6 +1,7 @@
+from __future__ import annotations
 from typing import List, Dict, Final
 from src.image.Image import Image
-from PySide2.QtCore import Qt, QAbstractListModel, Slot, QModelIndex
+from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
 
 
 class ArtFactory(QAbstractListModel):
@@ -14,6 +15,25 @@ class ArtFactory(QAbstractListModel):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.__arts = []
+
+    def __add__(self, value: Image) -> ArtFactory:
+        self.beginInsertRows(QModelIndex(), 0, 0)
+        self.__arts.insert(0, value)
+        self.endInsertRows()
+        return self
+
+    def __setitem__(self, key: int, value: Image) -> None:
+        row = self.index(key)
+        self.__arts[key].apply_changes(value)
+        self.dataChanged.emit(row, row, self.roleNames())
+
+    def __getitem__(self, key: int) -> Image:
+        return self.__arts[key]
+
+    def __delitem__(self, key: int) -> None:
+        self.beginRemoveColumns(QModelIndex(), key, key)
+        del self.__arts[key]
+        self.endRemoveRows()
 
     def data(self, index, role=Qt.DisplayRole) -> str:
         row = index.row()
@@ -36,21 +56,3 @@ class ArtFactory(QAbstractListModel):
             self.NEGATIVE_ROLE: b"negative",
             self.CONVOLUTION_ROLE: b"convolution"
         }
-
-    @Slot(str, str, bool, bool, bool)
-    def add_art(self, name: str, path: str, contrast: bool, negative: bool, convolution: bool) -> None:
-        self.beginInsertRows(QModelIndex(), 0, 0)
-        self.__arts.insert(0, Image(name, path, contrast, negative, convolution))
-        self.endInsertRows()
-
-    @Slot(int, str, bool, bool, bool)
-    def edit_art(self, row: int, name: str, contrast: bool, negative: bool, convolution: bool) -> None:
-        ix = self.index(row)
-        self.__arts[row].apply_changes(name, contrast, negative, convolution)
-        self.dataChanged.emit(ix, ix, self.roleNames())
-
-    @Slot(int)
-    def remove_art(self, row: int) -> None:
-        self.beginRemoveColumns(QModelIndex(), row, row)
-        del self.__arts[row]
-        self.endRemoveRows()

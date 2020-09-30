@@ -1,23 +1,33 @@
+from __future__ import annotations
 import os
 import sys
-from typing import List
-from PySide2.QtWidgets import QApplication, QFileDialog
+from typing import Callable
+from PySide2.QtWidgets import QApplication
 from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
-from PySide2.QtCore import Qt, QObject
+from PySide2.QtCore import Qt, QObject, Slot
 from PySide2.QtQuickControls2 import QQuickStyle
 from src.gui.util.GuiConsts import uiConsts
 from src.factory.ArtFactory import ArtFactory
 
 
-class Gui:
+class Gui(QObject):
+    artFactory: ArtFactory
+
     app: QApplication
     engine: QQmlApplicationEngine
     root: QObject
-    addImageDialogPathBox: QObject
-    addImageDialogBrowseBtn: QObject
+    addImageDialog: QObject
+
+    onAddArtCallback: Callable[[Gui, str, str, bool, bool, bool], None]
+    onEditArtCallback: Callable[[Gui, int, str, bool, bool, bool], None]
+    onRemoveArtCallback: Callable[[Gui, int], None]
+    onOpenArtDialogCallback: Callable[[Gui, int], None]
+    onBrowseCallback: Callable[[], str]
 
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
+        self.artFactory = art_factory
+
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
         QQuickStyle.setStyle("Material")
@@ -28,7 +38,8 @@ class Gui:
 
         self.engine = QQmlApplicationEngine()
         self.engine.rootContext().setContextProperty("Consts", uiConsts)
-        self.engine.rootContext().setContextProperty("ArtFactory", art_factory)
+        self.engine.rootContext().setContextProperty("Gui", self)
+        self.engine.rootContext().setContextProperty("ArtFactory", self.artFactory)
         self.engine.load(f"{os.path.dirname(__file__)}/res/layout/main.qml")
         # self.engine.load("qml/main.qml")  # TODO
 
@@ -38,24 +49,31 @@ class Gui:
 
     def __init_views(self) -> None:
         self.root = self.engine.rootObjects()[0]
-        self.addImageDialogPathBox = self.root.findChild(QObject, "addImageDialogPathBox")
-        self.addImageDialogBrowseBtn = self.root.findChild(QObject, "addImageDialogBrowseBtn")
+        self.addImageDialog = self.root.findChild(QObject, "addImageDialog")
+
+    @Slot(str, str, bool, bool, bool)
+    def add_art(self, name: str, path: str, contrast: bool, negative: bool, convolution: bool):
+        self.onAddArtCallback(self, name, path, contrast, negative, convolution)
+
+    @Slot(int, str, bool, bool, bool)
+    def edit_art(self, index: int, name: str, contrast: bool, negative: bool, convolution: bool):
+        self.onEditArtCallback(self, index, name, contrast, negative, convolution)
+
+    @Slot(int)
+    def remove_art(self, index: int):
+        self.onRemoveArtCallback(self, index)
+
+    @Slot(int)
+    def open_art_dialog(self, index: int):
+        self.onOpenArtDialogCallback(self, index)
+
+    @Slot(result=str)
+    def browse_files(self) -> str:
+        return self.onBrowseCallback()
 
     @staticmethod
     def get_property(element: QObject, prop: str) -> QQmlProperty:
         return QQmlProperty(element, prop)
-
-    @staticmethod
-    def browse_files() -> str:
-        browse_dialog = QFileDialog()
-        browse_dialog.setWindowTitle("Open Image")
-        browse_dialog.setFileMode(QFileDialog.ExistingFile)
-        browse_dialog.setNameFilter("Images (*.ppm *.jpg)")
-        if browse_dialog.exec_():
-            selected_files: List[str] = browse_dialog.selectedFiles()
-            if selected_files:
-                return selected_files[0]
-        return ""
 
     def exec(self) -> None:
         sys.exit(self.app.exec_())

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 
 
@@ -16,9 +17,9 @@ class Image:
         self.negative = negative
         self.convolution = convolution
 
-    def apply_changes(self, name: str, contrast: bool, negative: bool, convolution: bool):
+    def apply_changes(self, new_img: Image):
         # TODO
-        self.name = name
-        self.contrast = contrast
-        self.negative = negative
-        self.convolution = convolution
+        self.name = new_img.name
+        self.contrast = new_img.contrast
+        self.negative = new_img.negative
+        self.convolution = new_img.convolution

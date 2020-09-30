@@ -29,13 +29,15 @@ ApplicationWindow {
         anchors.margins: Consts.ArtLayoutMargins
 
         Label {
-            //objectName: "artLayout"  TODO
             anchors.fill: parent
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
     }
     SideDrawer { id: drawer }
-    AddImageDialog { id: addImageDialog }
+    AddImageDialog {
+        id: addImageDialog
+        objectName: "addImageDialog"
+    }
     SettingsDialog { id: settingsDialog }
 }

@@ -92,7 +92,6 @@ Dialog {
 
                     TextField {
                         id: addImageDialogPathBox
-                        objectName: "addImageDialogPathBox"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.leftMargin: Consts.AddImageDialogPathBoxLeftMargin
@@ -103,10 +102,10 @@ Dialog {
                         }
                     }
                     Button {
-                        objectName: "addImageDialogBrowseBtn"
                         text: Consts.AddImageDialogBrowseBtn
                         highlighted: true
                         enabled: itemIndex == -1
+                        onClicked: addImageDialogPathBox.text = Gui.browse_files()
                     }
                 }
             }
@@ -141,7 +140,7 @@ Dialog {
             DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
             onClicked: {
                 if (itemIndex == -1) {
-                    ArtFactory.add_art(
+                    Gui.add_art(
                         addImageDialogNameBox.text,
                         addImageDialogPathBox.text,
                         contrastEffect.checked,
@@ -152,7 +151,7 @@ Dialog {
                     addImageDialogPathBox.text = ""
                 }
                 else {
-                    ArtFactory.edit_art(
+                    Gui.edit_art(
                         itemIndex,
                         addImageDialogNameBox.text,
                         contrastEffect.checked,

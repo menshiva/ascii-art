@@ -36,13 +36,12 @@ Drawer {
                     ToolTip.visible: hovered
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonText
-                    onClicked: addImageDialog.openDialog(-1, "", "", true, false, false)
+                    onClicked: Gui.open_art_dialog(-1)
                 }
             }
         }
         ListView {
             id: artList
-            //objectName: "artList"  //TODO
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.bottomMargin: Consts.ArtListItemMargin

@@ -7,9 +7,6 @@ Item {
     required property int index
     required property string name
     required property string path
-    required property bool contrast
-    required property bool negative
-    required property bool convolution
     id: artListItem
     width: ListView.view.width
     height: Consts.ArtListItemHeight
@@ -65,13 +62,11 @@ Item {
 
                     Action {
                         text: Consts.ArtListItemPropertiesBtn
-                        onTriggered: addImageDialog.openDialog(
-                            index, name, path, contrast, negative, convolution
-                        )
+                        onTriggered: Gui.open_art_dialog(index)
                     }
                     Action {
                         text: Consts.ArtListItemRemoveBtn
-                        onTriggered: ArtFactory.remove_art(index)
+                        onTriggered: Gui.remove_art(index)
                     }
                 }
             }
