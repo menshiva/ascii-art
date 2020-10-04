@@ -5,17 +5,20 @@ from src.factory.ArtFactory import ArtFactory
 from src.image.Image import Image
 
 
-def add_art(gui: Gui, name: str, path: str, contrast: bool, negative: bool, convolution: bool) -> None:
-    grayscale: str = gui.get_property(gui.settings, "grayscale").read()
+def add_art(gui: Gui,
+            name: str, path: str, grayscale: str,
+            contrast: bool, negative: bool, convolution: bool) -> None:
     gui.artFactory.lastDrawedArt += 1
     gui.artFactory += Image(name, path, grayscale, contrast, negative, convolution)
     if len(gui.artFactory) > 1:
         gui.get_property(gui.playAnimBtn, "enabled").write(True)
 
 
-def edit_art(gui: Gui, index: int, name: str, contrast: bool, negative: bool, convolution: bool) -> None:
-    grayscale: str = gui.get_property(gui.settings, "grayscale").read()
-    gui.artFactory[index] = (name, grayscale, contrast, negative, convolution)
+def edit_art(gui: Gui, index: int,
+             name: str, grayscale: str,
+             contrast: bool, negative: bool, convolution: bool) -> None:
+    old_img = gui.artFactory[index]
+    gui.artFactory[index] = Image(name, old_img.path, grayscale, contrast, negative, convolution)
     if gui.artFactory.lastDrawedArt == index:
         draw_art(gui, index)
 
@@ -71,9 +74,9 @@ def change_art_size(gui: Gui, value: int) -> None:
         draw_art(gui, gui.artFactory.lastDrawedArt)
 
 
-def apply_settings(gui: Gui) -> None:
+def apply_grayscale(gui: Gui, grayscale: str) -> None:
     for i, art in enumerate(gui.artFactory.arts()):
-        edit_art(gui, i, art.name, art.is_contrast, art.is_negative, art.is_convolution)
+        edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
 
 
 def main():
@@ -86,17 +89,7 @@ def main():
     gui.onBrowseCallback = browse_art
     gui.onDrawArtCallback = draw_art
     gui.onArtSizeChanged = change_art_size
-    gui.onApplySettings = apply_settings
-    # TODO
-    art_factory += Image(
-        "vlad", "/run/user/1000/doc/de44aa83/photo_2020-09-27_20-37-29.jpg", "", False, False, False
-    )
-    art_factory += Image(
-        "misa", "/run/user/1000/doc/45de00f0/photo_2020-09-27_15-32-33.jpg", "", True, False, True
-    )
-    art_factory += Image(
-        "egor", "/run/user/1000/doc/54ed4330/test2.jpg", "", True, True, False
-    )
+    gui.onApplyGrayscale = apply_grayscale
     gui.exec()
 
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
+import numpy as np
 from typing import Tuple
 from imageio import imread
 from src.image.util.ImageConsts import imageConsts
-import numpy as np
 
 
 class Image:
@@ -14,10 +14,10 @@ class Image:
     __width: int
     __height: int
     __color_space: int
+    __grayscale_level: str
     __img_data: np.ndarray
     __ascii_data: np.chararray
     __cached_ascii_data: np.chararray
-    __grayscale_level: str
 
     def __init__(self, name: str, path: str, glvl: str, contrast: bool, negative: bool, convolution: bool) -> None:
         self.name = name
@@ -40,14 +40,6 @@ class Image:
             self.__height, self.__width = img_info
             self.__color_space = 1
 
-        self.__convert_to_ascii_art(self.is_contrast, self.is_negative, self.is_convolution)
-
-    def apply_changes(self, new_img: Tuple[str, str, bool, bool, bool]) -> None:
-        self.name, glvl, self.is_contrast, self.is_negative, self.is_convolution = new_img
-        if not glvl:
-            self.__grayscale_level = imageConsts["DefaultGrayscaleLevel"]
-        else:
-            self.__grayscale_level = glvl
         self.__convert_to_ascii_art(self.is_contrast, self.is_negative, self.is_convolution)
 
     def get_ascii_art(self, win_width: int, win_height: int) -> str:

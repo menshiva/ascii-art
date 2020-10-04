@@ -36,7 +36,10 @@ Drawer {
                     ToolTip.visible: hovered
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonText
-                    onClicked: Gui.open_art_dialog(-1)
+                    onClicked: {
+                        Gui.stop_animation()
+                        Gui.open_art_dialog(-1)
+                    }
                 }
             }
         }

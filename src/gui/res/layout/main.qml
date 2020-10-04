@@ -21,6 +21,7 @@ ApplicationWindow {
         property alias height: window.height
         property int theme: 0
         property string grayscale: ""
+        property double animationDuration: Consts.DefaultAnimationDuration
     }
     FontLoader {
         id: modenineFont

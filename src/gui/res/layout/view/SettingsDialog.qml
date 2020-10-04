@@ -65,6 +65,26 @@ Dialog {
                 selectByMouse: true
             }
         }
+        GroupBox {
+            Layout.fillWidth: true
+            title: Consts.AnimationDuration
+
+            Slider {
+                id: durationBox
+                width: parent.width
+                snapMode: Slider.SnapAlways
+                from: 0.1
+                stepSize: 0.1
+                to: 2.0
+                value: settings.animationDuration.toFixed(1)
+
+                ToolTip {
+                    parent: durationBox.handle
+                    visible: durationBox.pressed
+                    text: durationBox.value.toFixed(1)
+                }
+            }
+        }
     }
     footer: DialogButtonBox {
         Button {
@@ -73,8 +93,11 @@ Dialog {
             DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
             onClicked: {
                 settings.theme = themeBox.currentIndex
-                settings.grayscale = grayscaleBox.text
-                Gui.apply_settings()
+                settings.animationDuration = durationBox.value
+                if (settings.grayscale != grayscaleBox.text) {
+                    settings.grayscale = grayscaleBox.text
+                    Gui.apply_grayscale(settings.grayscale)
+                }
             }
         }
         Button {
@@ -84,6 +107,7 @@ Dialog {
             onClicked: {
                 themeBox.currentIndex = settings.theme
                 grayscaleBox.text = settings.grayscale
+                durationBox.value = settings.animationDuration.toFixed(1)
             }
         }
     }

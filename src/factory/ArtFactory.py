@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List, Dict, Final, Tuple
-from src.image.Image import Image
+from typing import List, Dict, Final
 from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
+from src.image.Image import Image
 
 
 class ArtFactory(QAbstractListModel):
@@ -24,9 +24,9 @@ class ArtFactory(QAbstractListModel):
         self.endInsertRows()
         return self
 
-    def __setitem__(self, key: int, value: Tuple[str, str, bool, bool, bool]) -> None:
+    def __setitem__(self, key: int, new_img: Image) -> None:
         row = self.index(key)
-        self.__arts[key].apply_changes(value)
+        self.__arts[key] = new_img
         self.dataChanged.emit(row, row, self.roleNames())
 
     def __getitem__(self, key: int) -> Image:

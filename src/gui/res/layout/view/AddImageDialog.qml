@@ -143,6 +143,7 @@ Dialog {
                     Gui.add_art(
                         addImageDialogNameBox.text,
                         addImageDialogPathBox.text,
+                        settings.grayscale,
                         contrastEffect.checked,
                         negativeEffect.checked,
                         convolutionEffect.checked
@@ -154,6 +155,7 @@ Dialog {
                     Gui.edit_art(
                         itemIndex,
                         addImageDialogNameBox.text,
+                        settings.grayscale,
                         contrastEffect.checked,
                         negativeEffect.checked,
                         convolutionEffect.checked

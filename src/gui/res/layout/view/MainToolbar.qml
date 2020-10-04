@@ -22,9 +22,10 @@ ToolBar {
         }
         Slider {
             id: artSizeSlider
+            objectName: "artSizeSlider"
             Material.accent: Consts.SliderColor
             snapMode: Slider.SnapAlways
-            from: 1
+            from: 3
             stepSize: 1
             to: 25
             value: Consts.DefaultArtSize
@@ -43,28 +44,18 @@ ToolBar {
         }
         ToolSeparator {}
         ToolButton {
-            id: playAnimBtn
             objectName: "playAnimBtn"
             enabled: false
             icon.source: Consts.PlayButtonImgSrc
             text: Consts.PlayButtonText
-            onClicked: {
-                enabled = false
-                artSizeSlider.enabled = false
-                stopAnimBtn.enabled = true
-            }
+            onClicked: Gui.start_animation()
         }
         ToolButton {
-            id: stopAnimBtn
             objectName: "stopAnimBtn"
             enabled: false
             icon.source: Consts.StopButtonImgSrc
             text: Consts.StopButtonText
-            onClicked: {
-                enabled = false
-                artSizeSlider.enabled = true
-                playAnimBtn.enabled = true
-            }
+            onClicked: Gui.stop_animation()
         }
         ToolSeparator {}
         ToolButton {
@@ -79,7 +70,10 @@ ToolBar {
 
                 Action {
                     text: Consts.SettingsButtonText
-                    onTriggered: settingsDialog.open()
+                    onTriggered: {
+                        Gui.stop_animation()
+                        settingsDialog.open()
+                    }
                 }
             }
         }

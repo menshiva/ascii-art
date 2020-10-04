@@ -22,6 +22,7 @@ uiConsts = {
     "AddImageDialogPathBoxLeftMargin": 2,
     "AddImageDialogPathBoxRightMargin": 8,
     "DefaultArtSize": 10,
+    "DefaultAnimationDuration": 1.0,
 
     "ToolbarTitle": "ASCII art",
     "DrawerTitle": "Image list",
@@ -50,6 +51,7 @@ uiConsts = {
                               "(Leave the field empty to use the default grayscale level)",
     "AddImageDialogRequiredTootlip": "Required field",
     "SliderTooltip": "Art size",
+    "AnimationDuration": "Animation duration",
 
     "DrawerButtonImgSrc": "../../drawable/menu.svg",
     "PlayButtonImgSrc": "../../drawable/play.svg",

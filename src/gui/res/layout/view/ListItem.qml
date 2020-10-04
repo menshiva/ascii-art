@@ -29,6 +29,7 @@ Item {
             anchors.fill: parent
             highlighted: artListItem.ListView.isCurrentItem
             onClicked: {
+                Gui.stop_animation()
                 artList.currentIndex = index
                 drawer.close()
             }
@@ -62,11 +63,17 @@ Item {
 
                     Action {
                         text: Consts.ArtListItemPropertiesBtn
-                        onTriggered: Gui.open_art_dialog(index)
+                        onTriggered: {
+                            Gui.stop_animation()
+                            Gui.open_art_dialog(index)
+                        }
                     }
                     Action {
                         text: Consts.ArtListItemRemoveBtn
-                        onTriggered: Gui.remove_art(index)
+                        onTriggered: {
+                            Gui.stop_animation()
+                            Gui.remove_art(index)
+                        }
                     }
                 }
             }
