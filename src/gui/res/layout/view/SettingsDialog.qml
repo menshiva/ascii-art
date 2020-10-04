@@ -61,7 +61,7 @@ Dialog {
                 id: grayscaleBox
                 width: parent.width
                 text: settings.grayscale
-                placeholderText: "Enter something here..."  // TODO
+                placeholderText: Consts.DefaultGrayscaleLevelPlaceholder
                 selectByMouse: true
             }
         }
@@ -74,6 +74,7 @@ Dialog {
             onClicked: {
                 settings.theme = themeBox.currentIndex
                 settings.grayscale = grayscaleBox.text
+                Gui.apply_settings()
             }
         }
         Button {

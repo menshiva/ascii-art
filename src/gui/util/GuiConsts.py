@@ -21,6 +21,7 @@ uiConsts = {
     "ArtListItemAnimationDuration": 150,
     "AddImageDialogPathBoxLeftMargin": 2,
     "AddImageDialogPathBoxRightMargin": 8,
+    "DefaultArtSize": 10,
 
     "ToolbarTitle": "ASCII art",
     "DrawerTitle": "Image list",
@@ -48,6 +49,7 @@ uiConsts = {
                               "Your ASCII art will be shown by these symbols. "
                               "(Leave the field empty to use the default grayscale level)",
     "AddImageDialogRequiredTootlip": "Required field",
+    "SliderTooltip": "Art size",
 
     "DrawerButtonImgSrc": "../../drawable/menu.svg",
     "PlayButtonImgSrc": "../../drawable/play.svg",
@@ -57,6 +59,10 @@ uiConsts = {
     "SettingsIconHelpSrc": "../../drawable/help.svg",
     "AddImageIconRequiredSrc": "../../drawable/warning.svg",
     "ArtListInfoImgSrc": "../../drawable/more.svg",
+    "FontSrc": "../fonts/modenine.ttf",
 
-    "ShadowColor": "#80212121"
+    "DefaultGrayscaleLevelPlaceholder": "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'.",
+
+    "ShadowColor": "#80212121",
+    "SliderColor": "#00675b"
 }

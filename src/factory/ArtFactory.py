@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Dict, Final
+from typing import List, Dict, Final, Tuple
 from src.image.Image import Image
 from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
 
@@ -11,9 +11,11 @@ class ArtFactory(QAbstractListModel):
     NEGATIVE_ROLE: Final = Qt.CheckStateRole + 1
     CONVOLUTION_ROLE: Final = Qt.CheckStateRole + 2
     __arts: List[Image]
+    lastDrawedArt: int
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
+        self.lastDrawedArt = -1
         self.__arts = []
 
     def __add__(self, value: Image) -> ArtFactory:
@@ -22,7 +24,7 @@ class ArtFactory(QAbstractListModel):
         self.endInsertRows()
         return self
 
-    def __setitem__(self, key: int, value: Image) -> None:
+    def __setitem__(self, key: int, value: Tuple[str, str, bool, bool, bool]) -> None:
         row = self.index(key)
         self.__arts[key].apply_changes(value)
         self.dataChanged.emit(row, row, self.roleNames())
@@ -35,14 +37,23 @@ class ArtFactory(QAbstractListModel):
         del self.__arts[key]
         self.endRemoveRows()
 
+    def __len__(self) -> int:
+        return len(self.__arts)
+
+    def arts(self) -> List[Image]:
+        return self.__arts
+
+    def is_exist(self, index: int) -> bool:
+        return len(self.__arts) > index
+
     def data(self, index, role=Qt.DisplayRole) -> str:
         row = index.row()
         return {
             self.NAME_ROLE: self.__arts[row].name,
             self.IMAGE_ROLE: self.__arts[row].path,
-            self.CONTRAST_ROLE: self.__arts[row].contrast,
-            self.NEGATIVE_ROLE: self.__arts[row].negative,
-            self.CONVOLUTION_ROLE: self.__arts[row].convolution,
+            self.CONTRAST_ROLE: self.__arts[row].is_contrast,
+            self.NEGATIVE_ROLE: self.__arts[row].is_negative,
+            self.CONVOLUTION_ROLE: self.__arts[row].is_convolution,
         }[role]
 
     def rowCount(self, parent=QModelIndex()) -> int:

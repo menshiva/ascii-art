@@ -42,6 +42,7 @@ Drawer {
         }
         ListView {
             id: artList
+            objectName: "artList"
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.bottomMargin: Consts.ArtListItemMargin

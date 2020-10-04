@@ -20,17 +20,51 @@ ToolBar {
             text: Consts.ToolbarTitle
             font.pixelSize: Consts.ToolbarTitleFontSize
         }
+        Slider {
+            id: artSizeSlider
+            Material.accent: Consts.SliderColor
+            snapMode: Slider.SnapAlways
+            from: 1
+            stepSize: 1
+            to: 25
+            value: Consts.DefaultArtSize
+            onMoved: Gui.change_art_size(value)
+
+            ToolTip {
+                parent: artSizeSlider.handle
+                visible: artSizeSlider.hovered && !artSizeSlider.pressed
+                text: Consts.SliderTooltip
+            }
+            ToolTip {
+                parent: artSizeSlider.handle
+                visible: artSizeSlider.pressed
+                text: artSizeSlider.value
+            }
+        }
+        ToolSeparator {}
         ToolButton {
-            //objectName: "playAnimBtn"  TODO
+            id: playAnimBtn
+            objectName: "playAnimBtn"
             enabled: false
             icon.source: Consts.PlayButtonImgSrc
             text: Consts.PlayButtonText
+            onClicked: {
+                enabled = false
+                artSizeSlider.enabled = false
+                stopAnimBtn.enabled = true
+            }
         }
         ToolButton {
-            //objectName: "stopAnimBtn"  TODO
+            id: stopAnimBtn
+            objectName: "stopAnimBtn"
             enabled: false
             icon.source: Consts.StopButtonImgSrc
             text: Consts.StopButtonText
+            onClicked: {
+                enabled = false
+                artSizeSlider.enabled = true
+                playAnimBtn.enabled = true
+            }
         }
         ToolSeparator {}
         ToolButton {
