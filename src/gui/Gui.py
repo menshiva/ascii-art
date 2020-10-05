@@ -33,10 +33,11 @@ class Gui(QObject):
     onEditArtCallback: Callable[[Gui, int, str, str, bool, bool, bool], None]
     onRemoveArtCallback: Callable[[Gui, int], None]
     onOpenArtDialogCallback: Callable[[Gui, int], None]
-    onBrowseCallback: Callable[[], str]
+    onBrowseArtCallback: Callable[[], str]
     onDrawArtCallback: Callable[[Gui, int], None]
     onArtSizeChanged: Callable[[Gui, int], None]
     onApplyGrayscale: Callable[[Gui, str], None]
+    onExportArt: Callable[[Gui, int], None]
 
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
@@ -101,7 +102,7 @@ class Gui(QObject):
 
     @Slot(result=str)
     def browse_files(self) -> str:
-        return self.onBrowseCallback()
+        return self.onBrowseArtCallback()
 
     @Slot()
     def draw_art(self) -> None:
@@ -135,6 +136,10 @@ class Gui(QObject):
             self.get_property(self.artSizeSlider, "enabled").write(True)
             self.get_property(self.playAnimBtn, "enabled").write(True)
             self.get_property(self.stopAnimBtn, "enabled").write(False)
+
+    @Slot(int)
+    def export_art(self, index: int) -> None:
+        self.onExportArt(self, index)
 
     @Slot(int)
     def art_list_change_index(self, index: int) -> None:

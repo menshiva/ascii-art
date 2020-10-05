@@ -43,7 +43,7 @@ def open_art_dialog(gui: Gui, index: int) -> None:
 
 def browse_art() -> str:
     browse_dialog = QFileDialog()
-    browse_dialog.setWindowTitle("Open Image")
+    browse_dialog.setWindowTitle("Open image")
     browse_dialog.setFileMode(QFileDialog.ExistingFile)
     browse_dialog.setNameFilter("Images (*.pgm *.ppm *.jpg *.jpeg *.png)")
     if browse_dialog.exec_():
@@ -79,6 +79,14 @@ def apply_grayscale(gui: Gui, grayscale: str) -> None:
         edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
 
 
+def export_art(gui: Gui, index: int) -> None:
+    files = QFileDialog.getSaveFileName(caption="Save art", filter="Text files (*.txt)")
+    if files and files[0]:
+        f = open(files[0], "w+")
+        f.write(gui.artFactory[index].export_art())
+        f.close()
+
+
 def main():
     art_factory = ArtFactory()
     gui = Gui(art_factory)
@@ -86,10 +94,11 @@ def main():
     gui.onEditArtCallback = edit_art
     gui.onRemoveArtCallback = remove_art
     gui.onOpenArtDialogCallback = open_art_dialog
-    gui.onBrowseCallback = browse_art
+    gui.onBrowseArtCallback = browse_art
     gui.onDrawArtCallback = draw_art
     gui.onArtSizeChanged = change_art_size
     gui.onApplyGrayscale = apply_grayscale
+    gui.onExportArt = export_art
     gui.exec()
 
 

@@ -51,6 +51,9 @@ class Image:
             ).view(np.chararray)
         return '\n'.join(''.join('%c' % symb for symb in row) for row in self.__cached_ascii_data)
 
+    def export_art(self) -> str:
+        return '\n'.join(''.join('%c' % symb for symb in row) for row in self.__ascii_data)
+
     def __convert_to_ascii_art(self, contrast: bool, negative: bool, convolution: bool) -> None:
         gray_data: np.ndarray = self.__img_data.copy()
         if convolution:

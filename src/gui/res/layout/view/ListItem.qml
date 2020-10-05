@@ -69,6 +69,13 @@ Item {
                         }
                     }
                     Action {
+                        text: Consts.ArtListItemSaveTxtBtn
+                        onTriggered: {
+                            Gui.stop_animation()
+                            Gui.export_art(index)
+                        }
+                    }
+                    Action {
                         text: Consts.ArtListItemRemoveBtn
                         onTriggered: {
                             Gui.stop_animation()
