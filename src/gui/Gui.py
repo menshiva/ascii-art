@@ -1,19 +1,24 @@
 from __future__ import annotations
+
 import os
 import sys
 import time
-from typing import Callable
 from threading import Thread, Event
-from PySide2.QtWidgets import QApplication
-from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
+from typing import Callable
+
 from PySide2.QtCore import Qt, QObject, Slot, Signal
+from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
 from PySide2.QtQuickControls2 import QQuickStyle
-from src.gui.util.GuiConsts import uiConsts
+from PySide2.QtWidgets import QApplication
+
 from src.factory.ArtFactory import ArtFactory
+from src.gui.util.GuiConsts import uiConsts
+from src.image.Image import Image
 
 
 class Gui(QObject):
     artFactory: ArtFactory
+    __imgThreadSignal: Signal = Signal(Image, int)
     __animationThreadSignal: Signal = Signal(int)
     __animationThread: Thread
     __animationStopEvent: Event
@@ -31,6 +36,7 @@ class Gui(QObject):
 
     onAddArtCallback: Callable[[Gui, str, str, str, bool, bool, bool], None]
     onEditArtCallback: Callable[[Gui, int, str, str, bool, bool, bool], None]
+    onImageLoaded: Callable[[Gui, Image, int], None]
     onRemoveArtCallback: Callable[[Gui, int], None]
     onOpenArtDialogCallback: Callable[[Gui, int], None]
     onBrowseArtCallback: Callable[[], str]
@@ -39,9 +45,12 @@ class Gui(QObject):
     onApplyGrayscale: Callable[[Gui, str], None]
     onExportArt: Callable[[Gui, int], None]
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
         self.artFactory = art_factory
+        self.__imgThreadSignal.connect(self.on_image_loaded)
+        self.__animationThreadSignal.connect(self.art_list_change_index)
 
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -56,7 +65,6 @@ class Gui(QObject):
         self.engine.rootContext().setContextProperty("Gui", self)
         self.engine.rootContext().setContextProperty("ArtFactory", self.artFactory)
         self.engine.load(f"{os.path.dirname(__file__)}/res/layout/main.qml")
-        # self.engine.load("qml/main.qml")  # TODO
 
         if not self.engine.rootObjects():
             sys.exit(-1)
@@ -124,9 +132,6 @@ class Gui(QObject):
         self.get_property(self.stopAnimBtn, "enabled").write(True)
         self.__setup_animation_thread()
         self.__animationThread.start()
-        # pool = QThreadPool(self)
-        # worker = Worker(self)
-        # pool.start(worker)
 
     @Slot()
     def stop_animation(self) -> None:
@@ -137,6 +142,15 @@ class Gui(QObject):
             self.get_property(self.playAnimBtn, "enabled").write(True)
             self.get_property(self.stopAnimBtn, "enabled").write(False)
 
+    def load_image(self, index: int,
+                   name: str, path: str, grayscale: str,
+                   contrast: bool, negative: bool, convolution: bool) -> None:
+        Thread(target=self.__img_thread, args=(
+            name, path, grayscale,
+            contrast, negative, convolution,
+            index, self.__imgThreadSignal
+        )).start()
+
     @Slot(int)
     def export_art(self, index: int) -> None:
         self.onExportArt(self, index)
@@ -145,18 +159,21 @@ class Gui(QObject):
     def art_list_change_index(self, index: int) -> None:
         self.get_property(self.artList, "currentIndex").write(index)
 
+    @Slot(Image, int)
+    def on_image_loaded(self, img: Image, index: int):
+        self.onImageLoaded(self, img, index)
+
     def __setup_animation_thread(self) -> None:
         duration: float = self.get_property(self.settings, "animationDuration").read()
         self.__animationStopEvent = Event()
         self.__animationThread = Thread(target=self.__animation_thread, args=(
             self.artFactory, duration,
-            self.__animationThreadSignal, self.__animationStopEvent, self.art_list_change_index
+            self.__animationThreadSignal, self.__animationStopEvent
         ))
 
     @staticmethod
     def __animation_thread(factory: ArtFactory, duration: float,
-                           signal: Signal(int), stop_event: Event, callback) -> None:
-        signal.connect(callback)
+                           signal: Signal[int], stop_event: Event) -> None:
         while True:
             for i, _ in enumerate(factory.arts()):
                 if stop_event.is_set():
@@ -165,24 +182,14 @@ class Gui(QObject):
                 time.sleep(duration)
 
     @staticmethod
+    def __img_thread(name: str, path: str, grayscale: str,
+                     contrast: bool, negative: bool, convolution: bool,
+                     index: int, signal: Signal[Image, int]) -> None:
+        signal.emit(Image(name, path, grayscale, contrast, negative, convolution), index)
+
+    @staticmethod
     def get_property(element: QObject, prop: str) -> QQmlProperty:
         return QQmlProperty(element, prop)
 
     def exec(self) -> None:
         sys.exit(self.app.exec_())
-
-
-# TODO
-"""class Worker(QRunnable):
-    gui: Gui
-
-    def __init__(self, gui: Gui):
-        super(Worker, self).__init__()
-        self.gui = gui
-
-    @Slot()
-    def run(self):
-        print("Thread start")
-        self.gui.draw_art(1)
-        time.sleep(5)
-        print("Thread complete")"""
