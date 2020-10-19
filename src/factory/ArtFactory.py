@@ -1,26 +1,23 @@
 from __future__ import annotations
-from typing import List, Dict, Final
+from typing import List, Dict, Final, Iterator
+
 from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
+
 from src.image.Image import Image
 
 
 class ArtFactory(QAbstractListModel):
-    NAME_ROLE: Final = Qt.DisplayRole
-    IMAGE_ROLE: Final = Qt.DecorationRole
-    CONTRAST_ROLE: Final = Qt.CheckStateRole
-    NEGATIVE_ROLE: Final = Qt.CheckStateRole + 1
-    CONVOLUTION_ROLE: Final = Qt.CheckStateRole + 2
-    __arts: List[Image]
-    lastDrawedArt: int
+    __NAME_ROLE: Final = Qt.DisplayRole
+    __IMAGE_ROLE: Final = Qt.DecorationRole
+    __CONTRAST_ROLE: Final = Qt.CheckStateRole
+    __NEGATIVE_ROLE: Final = Qt.CheckStateRole + 1
+    __CONVOLUTION_ROLE: Final = Qt.CheckStateRole + 2
+    __arts: List[Image] = []
+    lastDrawedArt: int = -1
 
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent)
-        self.lastDrawedArt = -1
-        self.__arts = []
-
-    def __add__(self, value: Image) -> ArtFactory:
+    def __add__(self, item: Image) -> ArtFactory:
         self.beginInsertRows(QModelIndex(), 0, 0)
-        self.__arts.insert(0, value)
+        self.__arts.insert(0, item)
         self.endInsertRows()
         return self
 
@@ -40,20 +37,20 @@ class ArtFactory(QAbstractListModel):
     def __len__(self) -> int:
         return len(self.__arts)
 
-    def arts(self) -> List[Image]:
-        return self.__arts
+    def __iter__(self) -> Iterator[List[Image]]:
+        return iter(self.__arts)
 
-    def is_exist(self, index: int) -> bool:
+    def __contains__(self, index: int) -> bool:
         return len(self.__arts) > index
 
     def data(self, index, role=Qt.DisplayRole) -> str:
         row = index.row()
         return {
-            self.NAME_ROLE: self.__arts[row].name,
-            self.IMAGE_ROLE: self.__arts[row].path,
-            self.CONTRAST_ROLE: self.__arts[row].is_contrast,
-            self.NEGATIVE_ROLE: self.__arts[row].is_negative,
-            self.CONVOLUTION_ROLE: self.__arts[row].is_convolution,
+            self.__NAME_ROLE: self.__arts[row].name,
+            self.__IMAGE_ROLE: self.__arts[row].path,
+            self.__CONTRAST_ROLE: self.__arts[row].is_contrast,
+            self.__NEGATIVE_ROLE: self.__arts[row].is_negative,
+            self.__CONVOLUTION_ROLE: self.__arts[row].is_convolution,
         }[role]
 
     def rowCount(self, parent=QModelIndex()) -> int:
@@ -61,9 +58,9 @@ class ArtFactory(QAbstractListModel):
 
     def roleNames(self) -> Dict[int, bytes]:
         return {
-            self.NAME_ROLE: b"name",
-            self.IMAGE_ROLE: b"path",
-            self.CONTRAST_ROLE: b"contrast",
-            self.NEGATIVE_ROLE: b"negative",
-            self.CONVOLUTION_ROLE: b"convolution"
+            self.__NAME_ROLE: b"name",
+            self.__IMAGE_ROLE: b"path",
+            self.__CONTRAST_ROLE: b"contrast",
+            self.__NEGATIVE_ROLE: b"negative",
+            self.__CONVOLUTION_ROLE: b"convolution"
         }

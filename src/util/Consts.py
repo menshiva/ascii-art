@@ -24,6 +24,9 @@ uiConsts = {
     "DefaultArtSize": 10,
     "DefaultAnimationDuration": 1.0,
 
+    "ProjectName": "ASCII art",
+    "AuthorName": "Ivan Menshikov",
+    "AuthorEmail": "menshiva@fit.cvut.cz",
     "ToolbarTitle": "ASCII art",
     "DrawerTitle": "Image list",
     "PlayButtonText": "Play animation",
@@ -64,10 +67,19 @@ uiConsts = {
     "SettingsIconHelpSrc": "../../drawable/help.svg",
     "AddImageIconRequiredSrc": "../../drawable/warning.svg",
     "ArtListInfoImgSrc": "../../drawable/more.svg",
-    "FontSrc": "../fonts/modenine.ttf",
+    "FontSrc": "../font/modenine.ttf",
 
-    "DefaultGrayscaleLevelPlaceholder": "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'.",
+    "DefaultGrayscaleLevel": "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'.",
 
     "ShadowColor": "#80212121",
     "SliderColor": "#00675b"
+}
+
+imageConsts = {
+    "ConvolutionKernel": [
+        [0, -1, 0],
+        [-1, 5, -1],
+        [0, -1, 0]
+    ],
+    "LuminanceCoefficients": [[0.2126, 0.7152, 0.0722]]
 }

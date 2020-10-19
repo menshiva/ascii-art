@@ -61,7 +61,7 @@ Dialog {
                 id: grayscaleBox
                 width: parent.width
                 text: settings.grayscale
-                placeholderText: Consts.DefaultGrayscaleLevelPlaceholder
+                placeholderText: Consts.DefaultGrayscaleLevel
                 selectByMouse: true
             }
         }

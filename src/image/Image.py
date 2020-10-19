@@ -1,11 +1,10 @@
 from __future__ import annotations
-
 from typing import Tuple
 
 import numpy as np
 from imageio import imread
 
-from src.image.util.ImageConsts import imageConsts
+from src.util import Consts
 
 
 class Image:
@@ -29,7 +28,7 @@ class Image:
         self.is_negative = negative
         self.is_convolution = convolution
         if not glvl:
-            self.__grayscale_level = imageConsts["DefaultGrayscaleLevel"]
+            self.__grayscale_level = Consts.uiConsts["DefaultGrayscaleLevel"]
         else:
             self.__grayscale_level = glvl
 
@@ -39,6 +38,7 @@ class Image:
             self.__height, self.__width, self.__color_space = img_info
             if self.__color_space > 3:
                 self.__img_data = self.__img_data[:, :, :3]
+                self.__color_space = 3
         else:
             self.__height, self.__width = img_info
             self.__color_space = 1
@@ -81,7 +81,7 @@ class Image:
         return kernelized_data
 
     def __convolution(self, data: np.ndarray, color_space: int) -> np.ndarray:
-        convolution_kernel: np.ndarray = np.array(imageConsts["ConvolutionKernel"])
+        convolution_kernel: np.ndarray = np.array(Consts.imageConsts["ConvolutionKernel"])
         return self.__compute_kernel(convolution_kernel, data, color_space)
 
     @staticmethod
@@ -101,7 +101,7 @@ class Image:
             gamma_compressed / 12.92,
             ((gamma_compressed + 0.055) / 1.055) ** 2.4
         )
-        linear_luminance: np.ndarray = linear @ np.array(imageConsts["LuminanceCoefficients"]).T
+        linear_luminance: np.ndarray = linear @ np.array(Consts.imageConsts["LuminanceCoefficients"]).T
         return (linear_luminance * 255).astype(np.uint8)
 
     def __get_ascii_data(self, data: np.ndarray, width: int, height: int) -> np.chararray:

@@ -23,7 +23,7 @@ def edit_art(gui: Gui, index: int,
 
 
 def apply_grayscale(gui: Gui, grayscale: str) -> None:
-    for i, art in enumerate(gui.artFactory.arts()):
+    for i, art in enumerate(gui.artFactory):
         edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
 
 
@@ -72,7 +72,7 @@ def browse_art() -> str:
 
 
 def draw_art(gui: Gui, index: int) -> None:
-    if not gui.artFactory.is_exist(index):
+    if index not in gui.artFactory:
         gui.artFactory.lastDrawedArt = -1
         gui.get_property(gui.artLayout, "text").write("")
         return

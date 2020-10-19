@@ -1,19 +1,20 @@
 from __future__ import annotations
+from typing import Callable
 
 import os
 import sys
 import time
 from threading import Thread, Event
-from typing import Callable
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
 from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtWidgets import QApplication
 
+from src.gui.res import layout
 from src.factory.ArtFactory import ArtFactory
-from src.gui.util.GuiConsts import uiConsts
 from src.image.Image import Image
+from src.util.Consts import uiConsts
 
 
 class Gui(QObject):
@@ -23,16 +24,15 @@ class Gui(QObject):
     __animationThread: Thread
     __animationStopEvent: Event
 
-    app: QApplication
-    engine: QQmlApplicationEngine
-    root: QObject
+    __app: QApplication
+    __engine: QQmlApplicationEngine
+    __root: QObject
     settings: QObject
     artLayout: QObject
     artList: QObject
     addImageDialog: QObject
     artSizeSlider: QObject
     playAnimBtn: QObject
-    stopAnimBtn: QObject
 
     onAddArtCallback: Callable[[Gui, str, str, str, bool, bool, bool], None]
     onEditArtCallback: Callable[[Gui, int, str, str, bool, bool, bool], None]
@@ -55,20 +55,28 @@ class Gui(QObject):
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
         QQuickStyle.setStyle("Material")
-        self.app = QApplication(sys.argv)
-        self.app.setOrganizationName("Ivan Menshikov")
-        self.app.setOrganizationDomain("menshiva@fit.cvut.cz")
-        self.app.setApplicationName("ASCII art")
+        self.__app = QApplication(sys.argv)
+        self.__app.setApplicationName(uiConsts["ProjectName"])
+        self.__app.setOrganizationName(uiConsts["AuthorName"])
+        self.__app.setOrganizationDomain(uiConsts["AuthorEmail"])
 
-        self.engine = QQmlApplicationEngine()
-        self.engine.rootContext().setContextProperty("Consts", uiConsts)
-        self.engine.rootContext().setContextProperty("Gui", self)
-        self.engine.rootContext().setContextProperty("ArtFactory", self.artFactory)
-        self.engine.load(f"{os.path.dirname(__file__)}/res/layout/main.qml")
+        self.__engine = QQmlApplicationEngine()
+        self.__engine.rootContext().setContextProperty("Consts", uiConsts)
+        self.__engine.rootContext().setContextProperty("Gui", self)
+        self.__engine.rootContext().setContextProperty("ArtFactory", self.artFactory)
+        self.__engine.load(layout.get_main_qml())
 
-        if not self.engine.rootObjects():
+        if not self.__engine.rootObjects():
             sys.exit(-1)
-        self.__init_views()
+        self.__root = self.__engine.rootObjects()[0]
+        self.settings = self.__root.findChild(QObject, "settings")
+        self.artLayout = self.__root.findChild(QObject, "artLayout")
+        self.artList = self.__root.findChild(QObject, "artList")
+        self.addImageDialog = self.__root.findChild(QObject, "addImageDialog")
+        self.artSizeSlider = self.__root.findChild(QObject, "artSizeSlider")
+        self.playAnimBtn = self.__root.findChild(QObject, "playAnimBtn")
+        self.artList.currentItemChanged.connect(self.draw_art)
+
         self.__setup_animation_thread()
 
     def __del__(self) -> None:
@@ -76,17 +84,6 @@ class Gui(QObject):
             self.artList.currentItemChanged.disconnect(self.draw_art)
         except RuntimeError:
             pass
-
-    def __init_views(self) -> None:
-        self.root = self.engine.rootObjects()[0]
-        self.settings = self.root.findChild(QObject, "settings")
-        self.artLayout = self.root.findChild(QObject, "artLayout")
-        self.artList = self.root.findChild(QObject, "artList")
-        self.addImageDialog = self.root.findChild(QObject, "addImageDialog")
-        self.artSizeSlider = self.root.findChild(QObject, "artSizeSlider")
-        self.playAnimBtn = self.root.findChild(QObject, "playAnimBtn")
-        self.stopAnimBtn = self.root.findChild(QObject, "stopAnimBtn")
-        self.artList.currentItemChanged.connect(self.draw_art)
 
     @Slot(str, str, str, bool, bool, bool)
     def add_art(self,
@@ -175,7 +172,7 @@ class Gui(QObject):
     def __animation_thread(factory: ArtFactory, duration: float,
                            signal: Signal[int], stop_event: Event) -> None:
         while True:
-            for i, _ in enumerate(factory.arts()):
+            for i, _ in enumerate(factory):
                 if stop_event.is_set():
                     return
                 signal.emit(i)
@@ -192,4 +189,4 @@ class Gui(QObject):
         return QQmlProperty(element, prop)
 
     def exec(self) -> None:
-        sys.exit(self.app.exec_())
+        sys.exit(self.__app.exec_())

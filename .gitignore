@@ -1,2 +1,5 @@
-/.idea
-/venv
+# Environment
+venv/
+
+# IDE cache
+.idea/
