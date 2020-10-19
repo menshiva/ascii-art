@@ -29,7 +29,10 @@ ToolBar {
             stepSize: 1
             to: 25
             value: Consts.DefaultArtSize
-            onMoved: Gui.change_art_size(value)
+            onMoved: {
+                artLayout.font.pixelSize = value
+                Gui.__draw_art()
+            }
 
             ToolTip {
                 parent: artSizeSlider.handle
@@ -48,14 +51,14 @@ ToolBar {
             enabled: false
             icon.source: Consts.PlayButtonImgSrc
             text: Consts.PlayButtonText
-            onClicked: Gui.start_animation()
+            onClicked: Gui.__start_animation()
         }
         ToolButton {
             objectName: "stopAnimBtn"
             enabled: false
             icon.source: Consts.StopButtonImgSrc
             text: Consts.StopButtonText
-            onClicked: Gui.stop_animation()
+            onClicked: Gui.__stop_animation()
         }
         ToolSeparator {}
         ToolButton {
@@ -71,7 +74,7 @@ ToolBar {
                 Action {
                     text: Consts.SettingsButtonText
                     onTriggered: {
-                        Gui.stop_animation()
+                        Gui.__stop_animation()
                         settingsDialog.open()
                     }
                 }

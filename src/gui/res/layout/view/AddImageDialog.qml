@@ -110,7 +110,7 @@ Dialog {
                             text: Consts.AddImageDialogBrowseBtn
                             highlighted: true
                             enabled: itemIndex == -1
-                            onClicked: addImageDialogPathBox.text = Gui.browse_files()
+                            onClicked: addImageDialogPathBox.text = Gui.__browse_files()
                         }
                     }
                 }
@@ -151,7 +151,7 @@ Dialog {
             text: itemIndex == -1 ? Consts.AddImageDialogAddBtn : Consts.AddImageDialogSaveBtn
             DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
             onClicked: {
-                if (itemIndex == -1) Gui.add_art(
+                if (itemIndex == -1) Gui.__add_art(
                     addImageDialogNameBox.text,
                     addImageDialogPathBox.text,
                     settings.grayscale,
@@ -159,7 +159,7 @@ Dialog {
                     negativeEffect.checked,
                     convolutionEffect.checked
                 )
-                else Gui.edit_art(
+                else Gui.__edit_art(
                     itemIndex,
                     addImageDialogNameBox.text,
                     settings.grayscale,

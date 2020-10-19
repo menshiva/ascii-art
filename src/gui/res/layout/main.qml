@@ -34,6 +34,7 @@ ApplicationWindow {
         anchors.margins: Consts.ArtLayoutMargins
 
         Label {
+            id: artLayout
             objectName: "artLayout"
             anchors.fill: parent
             horizontalAlignment: Text.AlignHCenter

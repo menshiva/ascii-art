@@ -29,7 +29,7 @@ Item {
             anchors.fill: parent
             highlighted: artListItem.ListView.isCurrentItem
             onClicked: {
-                Gui.stop_animation()
+                Gui.__stop_animation()
                 artList.currentIndex = index
                 drawer.close()
             }
@@ -64,22 +64,22 @@ Item {
                     Action {
                         text: Consts.ArtListItemPropertiesBtn
                         onTriggered: {
-                            Gui.stop_animation()
-                            Gui.open_art_dialog(index)
+                            Gui.__stop_animation()
+                            Gui.__open_art_dialog(index)
                         }
                     }
                     Action {
                         text: Consts.ArtListItemSaveTxtBtn
                         onTriggered: {
-                            Gui.stop_animation()
-                            Gui.export_art(index)
+                            Gui.__stop_animation()
+                            Gui.__export_art(index)
                         }
                     }
                     Action {
                         text: Consts.ArtListItemRemoveBtn
                         onTriggered: {
-                            Gui.stop_animation()
-                            Gui.remove_art(index)
+                            Gui.__stop_animation()
+                            Gui.__remove_art(index)
                         }
                     }
                 }

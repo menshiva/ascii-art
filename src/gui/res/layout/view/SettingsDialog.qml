@@ -96,7 +96,7 @@ Dialog {
                 settings.animationDuration = durationBox.value
                 if (settings.grayscale != grayscaleBox.text) {
                     settings.grayscale = grayscaleBox.text
-                    Gui.apply_grayscale(settings.grayscale)
+                    Gui.__apply_grayscale(settings.grayscale)
                 }
             }
         }

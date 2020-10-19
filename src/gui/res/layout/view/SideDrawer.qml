@@ -37,8 +37,8 @@ Drawer {
                     ToolTip.delay: Consts.TooltipDelay
                     ToolTip.text: Consts.AddImgButtonText
                     onClicked: {
-                        Gui.stop_animation()
-                        Gui.open_art_dialog(-1)
+                        Gui.__stop_animation()
+                        Gui.__open_art_dialog(-1)
                     }
                 }
             }

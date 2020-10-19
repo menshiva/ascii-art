@@ -1,6 +1,3 @@
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QFileDialog
-
 from src.factory.ArtFactory import ArtFactory
 from src.gui.Gui import Gui
 from src.image.Image import Image
@@ -11,7 +8,7 @@ def add_art(gui: Gui,
             contrast: bool, negative: bool, convolution: bool) -> None:
     gui.addImageDialog.setImageLoading(True)
     gui.artFactory.lastDrawedArt += 1
-    gui.load_image(-1, name, path, grayscale, contrast, negative, convolution)
+    gui.process_image_background(-1, name, path, grayscale, contrast, negative, convolution)
 
 
 def edit_art(gui: Gui, index: int,
@@ -19,19 +16,14 @@ def edit_art(gui: Gui, index: int,
              contrast: bool, negative: bool, convolution: bool) -> None:
     gui.addImageDialog.setImageLoading(True)
     old_img = gui.artFactory[index]
-    gui.load_image(index, name, old_img.path, grayscale, contrast, negative, convolution)
+    gui.process_image_background(index, name, old_img.path, grayscale, contrast, negative, convolution)
 
 
-def apply_grayscale(gui: Gui, grayscale: str) -> None:
-    for i, art in enumerate(gui.artFactory):
-        edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
-
-
-def on_image_loaded(gui: Gui, img: Image, index: int) -> None:
+def on_image_processed(gui: Gui, img: Image, index: int) -> None:
     if index == -1:
         gui.artFactory += img
         if len(gui.artFactory) > 1:
-            gui.get_property(gui.playAnimBtn, "enabled").write(True)
+            gui.set_play_animation_button_enable(True)
         gui.addImageDialog.clearInput()
     else:
         gui.artFactory[index] = img
@@ -46,7 +38,7 @@ def remove_art(gui: Gui, index: int) -> None:
         gui.artFactory.lastDrawedArt -= 1
     del gui.artFactory[index]
     if len(gui.artFactory) < 2:
-        gui.get_property(gui.playAnimBtn, "enabled").write(False)
+        gui.set_play_animation_button_enable(False)
 
 
 def open_art_dialog(gui: Gui, index: int) -> None:
@@ -59,45 +51,20 @@ def open_art_dialog(gui: Gui, index: int) -> None:
         )
 
 
-def browse_art() -> str:
-    browse_dialog = QFileDialog()
-    browse_dialog.setWindowTitle("Open image")
-    browse_dialog.setFileMode(QFileDialog.ExistingFile)
-    browse_dialog.setNameFilter("Images (*.pgm *.ppm *.jpg *.jpeg *.png)")
-    if browse_dialog.exec_():
-        selected_files = browse_dialog.selectedFiles()
-        if selected_files:
-            return selected_files[0]
-    return ""
-
-
 def draw_art(gui: Gui, index: int) -> None:
-    if index not in gui.artFactory:
+    if index == -1 or index not in gui.artFactory:
         gui.artFactory.lastDrawedArt = -1
-        gui.get_property(gui.artLayout, "text").write("")
+        gui.print_art("")
         return
     gui.artFactory.lastDrawedArt = index
-    art_width: int = gui.get_property(gui.artLayout, "width").read()
-    art_height: int = gui.get_property(gui.artLayout, "height").read()
-    fm: QFontMetrics = QFontMetrics(gui.get_property(gui.artLayout, "font").read())
-    char_width: int = art_width // fm.averageCharWidth()
-    char_height: int = art_height // fm.height()
+    (char_width, char_height) = gui.compute_art_label_size()
     art: str = gui.artFactory[index].get_ascii_art(char_width, char_height)
-    gui.get_property(gui.artLayout, "text").write(art)
+    gui.print_art(art)
 
 
-def change_art_size(gui: Gui, value: int) -> None:
-    gui.get_property(gui.artLayout, "font.pixelSize").write(value)
-    if gui.artFactory.lastDrawedArt != -1:
-        draw_art(gui, gui.artFactory.lastDrawedArt)
-
-
-def export_art(gui: Gui, index: int) -> None:
-    files = QFileDialog.getSaveFileName(caption="Save art", filter="Text files (*.txt)")
-    if files and files[0]:
-        f = open(files[0], "w+")
-        f.write(gui.artFactory[index].export_art())
-        f.close()
+def apply_grayscale(gui: Gui, grayscale: str) -> None:
+    for i, art in enumerate(gui.artFactory):
+        edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
 
 
 def main():
@@ -105,14 +72,11 @@ def main():
     gui = Gui(art_factory)
     gui.onAddArtCallback = add_art
     gui.onEditArtCallback = edit_art
-    gui.onApplyGrayscale = apply_grayscale
-    gui.onImageLoaded = on_image_loaded
+    gui.onImageProcessed = on_image_processed
     gui.onRemoveArtCallback = remove_art
     gui.onOpenArtDialogCallback = open_art_dialog
-    gui.onBrowseArtCallback = browse_art
     gui.onDrawArtCallback = draw_art
-    gui.onArtSizeChanged = change_art_size
-    gui.onExportArt = export_art
+    gui.onApplyGrayscale = apply_grayscale
     gui.exec()
 
 
