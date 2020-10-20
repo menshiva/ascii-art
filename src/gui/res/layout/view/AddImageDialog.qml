@@ -151,21 +151,14 @@ Dialog {
             text: itemIndex == -1 ? Consts.AddImageDialogAddBtn : Consts.AddImageDialogSaveBtn
             DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
             onClicked: {
-                if (itemIndex == -1) Gui.__add_art(
-                    addImageDialogNameBox.text,
-                    addImageDialogPathBox.text,
-                    settings.grayscale,
-                    contrastEffect.checked,
-                    negativeEffect.checked,
-                    convolutionEffect.checked
-                )
-                else Gui.__edit_art(
+                Gui.__add_edit_art(
                     itemIndex,
                     addImageDialogNameBox.text,
-                    settings.grayscale,
+                    addImageDialogPathBox.text,
                     contrastEffect.checked,
                     negativeEffect.checked,
-                    convolutionEffect.checked
+                    convolutionEffect.checked,
+                    settings.grayscale
                 )
             }
         }

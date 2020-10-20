@@ -3,23 +3,17 @@ from src.gui.Gui import Gui
 from src.image.Image import Image
 
 
-def add_art(gui: Gui,
-            name: str, path: str, grayscale: str,
-            contrast: bool, negative: bool, convolution: bool) -> None:
+def add_edit_art(gui: Gui, index: int, image: Image) -> None:
     gui.addImageDialog.setImageLoading(True)
-    gui.artFactory.lastDrawedArt += 1
-    gui.process_image_background(-1, name, path, grayscale, contrast, negative, convolution)
+    if index == -1:
+        gui.artFactory.lastDrawedArt += 1
+    else:
+        old_img = gui.artFactory[index]
+        image.path = old_img.path
+    gui.process_image_background(index, image)
 
 
-def edit_art(gui: Gui, index: int,
-             name: str, grayscale: str,
-             contrast: bool, negative: bool, convolution: bool) -> None:
-    gui.addImageDialog.setImageLoading(True)
-    old_img = gui.artFactory[index]
-    gui.process_image_background(index, name, old_img.path, grayscale, contrast, negative, convolution)
-
-
-def on_image_processed(gui: Gui, img: Image, index: int) -> None:
+def on_image_processed(gui: Gui, index: int, img: Image) -> None:
     if index == -1:
         gui.artFactory += img
         if len(gui.artFactory) > 1:
@@ -62,16 +56,16 @@ def draw_art(gui: Gui, index: int) -> None:
     gui.print_art(art)
 
 
-def apply_grayscale(gui: Gui, grayscale: str) -> None:
+def apply_grayscale(gui: Gui, new_grayscale: str) -> None:
     for i, art in enumerate(gui.artFactory):
-        edit_art(gui, i, art.name, grayscale, art.is_contrast, art.is_negative, art.is_convolution)
+        art.grayscale_level = new_grayscale
+        add_edit_art(gui, i, art)
 
 
 def main():
     art_factory = ArtFactory()
     gui = Gui(art_factory)
-    gui.onAddArtCallback = add_art
-    gui.onEditArtCallback = edit_art
+    gui.onAddEditArtCallback = add_edit_art
     gui.onImageProcessed = on_image_processed
     gui.onRemoveArtCallback = remove_art
     gui.onOpenArtDialogCallback = open_art_dialog

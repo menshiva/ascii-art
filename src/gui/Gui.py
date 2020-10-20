@@ -20,7 +20,7 @@ from src.util.Consts import uiConsts
 
 class Gui(QObject):
     artFactory: ArtFactory
-    __imgThreadSignal: Signal = Signal(Image, int)
+    __imgThreadSignal: Signal = Signal(int, Image)
     __animationThreadSignal: Signal = Signal(int)
     __animationThread: Thread
     __animationStopEvent: Event
@@ -36,15 +36,13 @@ class Gui(QObject):
     __stopAnimBtn: QObject
     addImageDialog: QObject
 
-    onAddArtCallback: Callable[[Gui, str, str, str, bool, bool, bool], None]
-    onEditArtCallback: Callable[[Gui, int, str, str, bool, bool, bool], None]
-    onImageProcessed: Callable[[Gui, Image, int], None]
+    onAddEditArtCallback: Callable[[Gui, int, Image], None]
+    onImageProcessed: Callable[[Gui, int, Image], None]
     onRemoveArtCallback: Callable[[Gui, int], None]
     onOpenArtDialogCallback: Callable[[Gui, int], None]
     onDrawArtCallback: Callable[[Gui, int], None]
     onApplyGrayscale: Callable[[Gui, str], None]
 
-    # noinspection PyUnresolvedReferences
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
         self.artFactory = art_factory
@@ -85,21 +83,34 @@ class Gui(QObject):
         except RuntimeError:
             pass
 
-    @Slot(str, str, str, bool, bool, bool)
-    def __add_art(self,
-                  name: str, path: str, grayscale: str,
-                  contrast: bool, negative: bool, convolution: bool) -> None:
-        self.onAddArtCallback(self, name, path, grayscale, contrast, negative, convolution)
+    def process_image_background(self, index: int, img: Image) -> None:
+        Thread(target=self.__image_processing_thread, args=(
+            index, img, self.__imgThreadSignal
+        )).start()
 
-    @Slot(int, str, str, bool, bool, bool)
-    def __edit_art(self, index: int,
-                   name: str, grayscale: str,
-                   contrast: bool, negative: bool, convolution: bool) -> None:
-        self.onEditArtCallback(self, index, name, grayscale, contrast, negative, convolution)
+    def compute_art_label_size(self) -> Tuple[int, int]:
+        art_width: int = self.__get_property(self.__artLayout, "width").read()
+        art_height: int = self.__get_property(self.__artLayout, "height").read()
+        fm: QFontMetrics = QFontMetrics(self.__get_property(self.__artLayout, "font").read())
+        char_width: int = art_width // fm.averageCharWidth()
+        char_height: int = art_height // fm.height()
+        return char_width, char_height
 
-    @Slot(Image, int)
-    def __on_image_processed(self, img: Image, index: int):
-        self.onImageProcessed(self, img, index)
+    def print_art(self, art: str) -> None:
+        self.__get_property(self.__artLayout, "text").write(art)
+
+    def set_play_animation_button_enable(self, enable: bool) -> None:
+        self.__get_property(self.__playAnimBtn, "enabled").write(enable)
+
+    @Slot(int, str, str, bool, bool, bool, str)
+    def __add_edit_art(self, index: int, name: str, path: str,
+                       contrast: bool, negative: bool, convolution: bool,
+                       grayscale: str) -> None:
+        self.onAddEditArtCallback(self, index, Image(name, path, contrast, negative, convolution, grayscale))
+
+    @Slot(int, Image)
+    def __on_image_processed(self, index: int, img: Image):
+        self.onImageProcessed(self, index, img)
 
     @Slot(int)
     def __remove_art(self, index: int) -> None:
@@ -115,8 +126,8 @@ class Gui(QObject):
         self.onDrawArtCallback(self, index)
 
     @Slot(str)
-    def __apply_grayscale(self, grayscale: str) -> None:
-        self.onApplyGrayscale(self, grayscale)
+    def __apply_grayscale(self, new_grayscale: str) -> None:
+        self.onApplyGrayscale(self, new_grayscale)
 
     @Slot(result=str)
     def __browse_files(self) -> str:
@@ -158,35 +169,12 @@ class Gui(QObject):
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:
         self.__get_property(self.__artList, "currentIndex").write(index)
-            
-    def process_image_background(self, index: int,
-                                 name: str, path: str, grayscale: str,
-                                 contrast: bool, negative: bool, convolution: bool) -> None:
-        Thread(target=self.__image_processing_thread, args=(
-            name, path, grayscale,
-            contrast, negative, convolution,
-            index, self.__imgThreadSignal
-        )).start()
-
-    def compute_art_label_size(self) -> Tuple[int, int]:
-        art_width: int = self.__get_property(self.__artLayout, "width").read()
-        art_height: int = self.__get_property(self.__artLayout, "height").read()
-        fm: QFontMetrics = QFontMetrics(self.__get_property(self.__artLayout, "font").read())
-        char_width: int = art_width // fm.averageCharWidth()
-        char_height: int = art_height // fm.height()
-        return char_width, char_height
-
-    def print_art(self, art: str) -> None:
-        self.__get_property(self.__artLayout, "text").write(art)
-
-    def set_play_animation_button_enable(self, enable: bool) -> None:
-        self.__get_property(self.__playAnimBtn, "enabled").write(enable)
 
     def __setup_animation_thread(self) -> None:
         duration: float = self.__get_property(self.__settings, "animationDuration").read()
         self.__animationStopEvent = Event()
         self.__animationThread = Thread(target=self.__animation_thread, args=(
-            self.artFactory, duration,
+            len(self.artFactory), duration,
             self.__animationThreadSignal, self.__animationStopEvent
         ))
 
@@ -194,20 +182,18 @@ class Gui(QObject):
         sys.exit(self.__app.exec_())
 
     @staticmethod
-    def __animation_thread(factory: ArtFactory, duration: float,
-                           signal: Signal[int], stop_event: Event) -> None:
+    def __animation_thread(factory_size: int, duration: float, signal: Signal[int], stop_event: Event) -> None:
         while True:
-            for i in range(len(factory) - 1, -1, -1):
+            for i in range(factory_size - 1, -1, -1):
                 if stop_event.is_set():
                     return
                 signal.emit(i)
                 time.sleep(duration)
 
     @staticmethod
-    def __image_processing_thread(name: str, path: str, grayscale: str,
-                                  contrast: bool, negative: bool, convolution: bool,
-                                  index: int, signal: Signal[Image, int]) -> None:
-        signal.emit(Image(name, path, grayscale, contrast, negative, convolution), index)
+    def __image_processing_thread(index: int, img: Image, signal: Signal[Image, int]) -> None:
+        img.convert_to_ascii_art()
+        signal.emit(index, img)
 
     @staticmethod
     def __get_property(element: QObject, prop: str) -> QQmlProperty:
