@@ -52,6 +52,7 @@ def draw_art(gui: Gui, index: int) -> None:
         return
     gui.artFactory.lastDrawedArt = index
     (char_width, char_height) = gui.compute_art_label_size()
+    # noinspection PyTypeChecker
     art: str = gui.artFactory[index].get_ascii_art(char_width, char_height)
     gui.print_art(art)
 

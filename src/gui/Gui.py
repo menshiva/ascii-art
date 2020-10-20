@@ -1,19 +1,18 @@
 from __future__ import annotations
-from typing import Callable, Tuple
-
 import os
 import sys
 import time
 from threading import Thread, Event
+from typing import Callable, Tuple
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
+from PySide2.QtGui import QFontMetrics
 from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtWidgets import QApplication, QFileDialog
-from PySide2.QtGui import QFontMetrics
 
-from src.gui.res import layout
 from src.factory.ArtFactory import ArtFactory
+from src.gui.res import layout
 from src.image.Image import Image
 from src.util.Consts import uiConsts
 
@@ -46,7 +45,9 @@ class Gui(QObject):
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
         self.artFactory = art_factory
+        # noinspection PyUnresolvedReferences
         self.__imgThreadSignal.connect(self.__on_image_processed)
+        # noinspection PyUnresolvedReferences
         self.__animationThreadSignal.connect(self.__art_list_change_index)
 
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
@@ -129,6 +130,7 @@ class Gui(QObject):
     def __apply_grayscale(self, new_grayscale: str) -> None:
         self.onApplyGrayscale(self, new_grayscale)
 
+    # noinspection PyTypeChecker
     @Slot(result=str)
     def __browse_files(self) -> str:
         browse_dialog = QFileDialog()
@@ -163,6 +165,7 @@ class Gui(QObject):
         files = QFileDialog.getSaveFileName(caption="Save art", filter="Text files (*.txt)")
         if files and files[0]:
             f = open(files[0], "w+")
+            # noinspection PyTypeChecker
             f.write(self.artFactory[index].export_art())
             f.close()
 

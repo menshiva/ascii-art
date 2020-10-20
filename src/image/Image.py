@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import Tuple, Callable, Any
 from dataclasses import dataclass, field
+from typing import Tuple, Callable, Any
 
 import numpy as np
 from imageio import imread
@@ -15,6 +15,7 @@ def normalize_uint8(func: Callable[[Image, Any], np.ndarray]) -> np.ndarray:
         data[data > 255] = 255
         return data.astype(np.uint8)
 
+    # noinspection PyTypeChecker
     return wrapper
 
 
@@ -23,6 +24,7 @@ def format_output_ascii(func: Callable[[Image, Any], np.ndarray]) -> str:
         data = func(self, *args)
         return '\n'.join(''.join('%c' % symb for symb in row) for row in data)
 
+    # noinspection PyTypeChecker
     return wrapper
 
 

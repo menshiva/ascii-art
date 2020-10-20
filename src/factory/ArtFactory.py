@@ -37,7 +37,7 @@ class ArtFactory(QAbstractListModel):
     def __len__(self) -> int:
         return len(self.__arts)
 
-    def __iter__(self) -> Iterator[List[Image]]:
+    def __iter__(self) -> Iterator[Image]:
         return iter(self.__arts)
 
     def __contains__(self, index: int) -> bool:
