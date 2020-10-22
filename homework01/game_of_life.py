@@ -1,3 +1,5 @@
+from typing import Tuple, Set, List
+
 # Homework 01 - Game of life
 # 
 # Your task is to implement part of the cell automata called
@@ -22,26 +24,44 @@
 # 
 # For more details about Game of Life, see Wikipedia - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 
+neighbours = {(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)}
 
-def update(alive, size, iter_n):
-   # TODO: Implement update rules 
-   # Should return set of coordinates of alive cells
-   # after iter_n iterations.
-   return set()
 
-def draw(alive, size):
-    """
-    alive - set of cell coordinates marked as alive, can be empty
-    size - size of simulation grid as  tuple - ( 
+def count_neighbours(alive: Set[Tuple[int, int]], current: Tuple[int, int]) -> int:
+    count = 0
+    for (y, x) in neighbours:
+        if (current[0] + y, current[1] + x) in alive:
+            count += 1
+    return count
 
-    output - string showing the board state with alive cells marked with X
-    """
-    # TODO: implement board drawing logic and return it as output
-    # Don't call print in this method, just return board string as output.
-    # Example of 3x3 board with 1 alive cell at coordinates (0, 2):
-    # +---+ 
-    # |  X|
-    # |   |
-    # |   |
-    # +---+ 
-    return '<board drawing>'
+
+def update(alive: Set[Tuple[int, int]], size: Tuple[int, int], iter_n: int) -> Set[Tuple[int, int]]:
+    if iter_n == 0:
+        return alive
+    new_alive = set()
+    for y in range(size[0]):
+        for x in range(size[1]):
+            cn = count_neighbours(alive, (y, x))
+            if cn == 3 or ((y, x) in alive and cn == 2):
+                new_alive.add((y, x))
+    return update(new_alive, size, iter_n - 1)
+
+
+def draw(alive: Set[Tuple[int, int]], size: Tuple[int, int]) -> str:
+    output: List[str] = ['+']
+    for x in range(size[1]):
+        output.append('-')
+    output.append("+\n")
+    for y in range(size[0]):
+        output.append('|')
+        for x in range(size[1]):
+            if (y, x) in alive:
+                output.append('X')
+            else:
+                output.append(' ')
+        output.append("|\n")
+    output.append('+')
+    for x in range(size[1]):
+        output.append('-')
+    output.append("+")
+    return ''.join(output)
