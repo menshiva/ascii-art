@@ -58,6 +58,7 @@ uiConsts = {
     "AddImageDialogRequiredTootlip": "Required field",
     "SliderTooltip": "Art size",
     "AnimationDuration": "Animation duration",
+    "SupportedImageFormats": "*.pgm *.ppm *.jpg *.jpeg *.png",
 
     "DrawerButtonImgSrc": "../../drawable/menu.svg",
     "PlayButtonImgSrc": "../../drawable/play.svg",

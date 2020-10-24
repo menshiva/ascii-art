@@ -11,10 +11,10 @@ from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtWidgets import QApplication, QFileDialog
 
-from src.factory.ArtFactory import ArtFactory
+from src.factory.art_factory import ArtFactory
 from src.gui.res import layout
-from src.image.Image import Image
-from src.util.Consts import uiConsts
+from src.image.image import Image
+from src.util.consts import uiConsts
 
 
 class Gui(QObject):
@@ -26,6 +26,7 @@ class Gui(QObject):
 
     __app: QApplication
     __engine: QQmlApplicationEngine
+    __open_img_dialog: QFileDialog
     __root: QObject
     __settings: QObject
     __artLayout: QObject
@@ -61,11 +62,14 @@ class Gui(QObject):
         self.__engine = QQmlApplicationEngine()
         self.__engine.rootContext().setContextProperty("Consts", uiConsts)
         self.__engine.rootContext().setContextProperty("Gui", self)
-        self.__engine.rootContext().setContextProperty("ArtFactory", self.artFactory)
+        self.__engine.rootContext().setContextProperty(
+            "ArtFactory", self.artFactory
+        )
         self.__engine.load(layout.get_main_qml())
 
         if not self.__engine.rootObjects():
             sys.exit(-1)
+
         self.__root = self.__engine.rootObjects()[0]
         self.__settings = self.__root.findChild(QObject, "settings")
         self.__artLayout = self.__root.findChild(QObject, "artLayout")
@@ -76,7 +80,8 @@ class Gui(QObject):
         self.addImageDialog = self.__root.findChild(QObject, "addImageDialog")
 
         self.__artList.currentItemChanged.connect(self.__draw_art)
-        self.__setup_animation_thread()
+        self.__init_animation_thread()
+        self.__init_open_img_dialog()
 
     def __del__(self) -> None:
         try:
@@ -90,11 +95,17 @@ class Gui(QObject):
         )).start()
 
     def compute_art_label_size(self) -> Tuple[int, int]:
-        art_width: int = self.__get_property(self.__artLayout, "width").read()
-        art_height: int = self.__get_property(self.__artLayout, "height").read()
-        fm: QFontMetrics = QFontMetrics(self.__get_property(self.__artLayout, "font").read())
-        char_width: int = art_width // fm.averageCharWidth()
-        char_height: int = art_height // fm.height()
+        art_width = int(self.__get_property(
+            self.__artLayout, "width"
+        ).read())
+        art_height = int(self.__get_property(
+            self.__artLayout, "height"
+        ).read())
+        fm = QFontMetrics(
+            self.__get_property(self.__artLayout, "font").read()
+        )
+        char_width = art_width // fm.averageCharWidth()
+        char_height = art_height // fm.height()
         return char_width, char_height
 
     def print_art(self, art: str) -> None:
@@ -107,10 +118,14 @@ class Gui(QObject):
     def __add_edit_art(self, index: int, name: str, path: str,
                        contrast: bool, negative: bool, convolution: bool,
                        grayscale: str) -> None:
-        self.onAddEditArtCallback(self, index, Image(name, path, contrast, negative, convolution, grayscale))
+        self.onAddEditArtCallback(
+            self,
+            index,
+            Image(name, path, contrast, negative, convolution, grayscale)
+        )
 
     @Slot(int, Image)
-    def __on_image_processed(self, index: int, img: Image):
+    def __on_image_processed(self, index: int, img: Image) -> None:
         self.onImageProcessed(self, index, img)
 
     @Slot(int)
@@ -123,7 +138,7 @@ class Gui(QObject):
 
     @Slot()
     def __draw_art(self) -> None:
-        index: int = self.__get_property(self.__artList, "currentIndex").read()
+        index = int(self.__get_property(self.__artList, "currentIndex").read())
         self.onDrawArtCallback(self, index)
 
     @Slot(str)
@@ -133,12 +148,8 @@ class Gui(QObject):
     # noinspection PyTypeChecker
     @Slot(result=str)
     def __browse_files(self) -> str:
-        browse_dialog = QFileDialog()
-        browse_dialog.setWindowTitle("Open image")
-        browse_dialog.setFileMode(QFileDialog.ExistingFile)
-        browse_dialog.setNameFilter("Images (*.pgm *.ppm *.jpg *.jpeg *.png)")
-        if browse_dialog.exec_():
-            selected_files = browse_dialog.selectedFiles()
+        if self.__open_img_dialog.exec_():
+            selected_files = self.__open_img_dialog.selectedFiles()
             if selected_files:
                 return selected_files[0]
         return ""
@@ -148,7 +159,7 @@ class Gui(QObject):
         self.__get_property(self.__artSizeSlider, "enabled").write(False)
         self.__get_property(self.__playAnimBtn, "enabled").write(False)
         self.__get_property(self.__stopAnimBtn, "enabled").write(True)
-        self.__setup_animation_thread()
+        self.__init_animation_thread()
         self.__animationThread.start()
 
     @Slot()
@@ -162,7 +173,10 @@ class Gui(QObject):
 
     @Slot(int)
     def __export_art(self, index: int) -> None:
-        files = QFileDialog.getSaveFileName(caption="Save art", filter="Text files (*.txt)")
+        files = QFileDialog.getSaveFileName(
+            caption="Save art",
+            filter="Text files (*.txt)"
+        )
         if files and files[0]:
             f = open(files[0], "w+")
             # noinspection PyTypeChecker
@@ -171,10 +185,22 @@ class Gui(QObject):
 
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:
-        self.__get_property(self.__artList, "currentIndex").write(index)
+        self.__get_property(
+            self.__artList, "currentIndex"
+        ).write(index)
 
-    def __setup_animation_thread(self) -> None:
-        duration: float = self.__get_property(self.__settings, "animationDuration").read()
+    def __init_open_img_dialog(self) -> None:
+        self.__open_img_dialog = QFileDialog()
+        self.__open_img_dialog.setWindowTitle("Open image")
+        self.__open_img_dialog.setFileMode(QFileDialog.ExistingFile)
+        self.__open_img_dialog.setNameFilter(
+            f"Images ({uiConsts['SupportedImageFormats']})"
+        )
+
+    def __init_animation_thread(self) -> None:
+        duration = float(self.__get_property(
+            self.__settings, "animationDuration"
+        ).read())
         self.__animationStopEvent = Event()
         self.__animationThread = Thread(target=self.__animation_thread, args=(
             len(self.artFactory), duration,
@@ -185,7 +211,8 @@ class Gui(QObject):
         sys.exit(self.__app.exec_())
 
     @staticmethod
-    def __animation_thread(factory_size: int, duration: float, signal: Signal[int], stop_event: Event) -> None:
+    def __animation_thread(factory_size: int, duration: float,
+                           signal: Signal[int], stop_event: Event) -> None:
         while True:
             for i in range(factory_size - 1, -1, -1):
                 if stop_event.is_set():
@@ -194,7 +221,8 @@ class Gui(QObject):
                 time.sleep(duration)
 
     @staticmethod
-    def __image_processing_thread(index: int, img: Image, signal: Signal[Image, int]) -> None:
+    def __image_processing_thread(index: int, img: Image,
+                                  signal: Signal[Image, int]) -> None:
         img.convert_to_ascii_art()
         signal.emit(index, img)
 

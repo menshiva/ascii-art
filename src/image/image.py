@@ -5,7 +5,7 @@ from typing import Tuple, Callable, Any
 import numpy as np
 from imageio import imread
 
-from src.util import Consts
+from src.util import consts
 
 
 def normalize_uint8(func: Callable[[Image, Any], np.ndarray]) -> np.ndarray:
@@ -47,7 +47,7 @@ class Image:
         if not self.path:
             return
         self.__img_data = np.asarray(imread(self.path))
-        img_info: Tuple = self.__img_data.shape
+        img_info = self.__img_data.shape
         if len(img_info) == 3:
             self.__height, self.__width, self.__color_space = img_info
             if self.__color_space > 3:
@@ -58,10 +58,10 @@ class Image:
             self.__color_space = 1
 
     def convert_to_ascii_art(self) -> None:
-        self.grayscale_level = Consts.uiConsts[
+        self.grayscale_level = consts.uiConsts[
             "DefaultGrayscaleLevel"
         ] if not self.grayscale_level else self.grayscale_level.strip()
-        gray_data: np.ndarray = self.__img_data.copy()
+        gray_data = self.__img_data.copy()
         if self.is_convolution:
             gray_data = self.__convolution(gray_data, self.__color_space)
         if self.is_negative:
@@ -70,30 +70,42 @@ class Image:
             gray_data = self.__contrast(gray_data)
         if self.__color_space > 1:
             gray_data = self.__rgb_to_gray(gray_data)
-        self.__ascii_data = self.__get_ascii_data(gray_data, self.__width, self.__height)
+        self.__ascii_data = self.__get_ascii_data(
+            gray_data,
+            self.__width, self.__height
+        )
         self.__cached_ascii_data = self.__ascii_data.copy()
 
     @format_output_ascii
     def get_ascii_art(self, win_width: int, win_height: int) -> np.ndarray:
         (ascii_w, ascii_h) = self.__compute_art_size(win_width, win_height)
         if self.__cached_ascii_data.shape != (ascii_h, ascii_w):
-            self.__cached_ascii_data = np.array(
-                [[self.__ascii_data[int(self.__height * y / ascii_h)][int(self.__width * x / ascii_w)]
-                  for x in range(ascii_w)] for y in range(ascii_h)]
-            ).view(np.chararray)
+            self.__cached_ascii_data = np.array([
+                [self.__ascii_data[
+                     int(self.__height * y / ascii_h)
+                 ][
+                     int(self.__width * x / ascii_w)
+                 ] for x in range(ascii_w)
+                 ] for y in range(ascii_h)
+            ]).view(np.chararray)
         return self.__cached_ascii_data
 
     @format_output_ascii
     def export_art(self) -> np.ndarray:
         return self.__ascii_data
 
-    def __get_ascii_data(self, data: np.ndarray, width: int, height: int) -> np.chararray:
-        img_data = data.reshape((height, width))
-        img_data = (img_data / 255.0 * (len(self.grayscale_level) - 1)).astype(np.int)
-        vectorized_grayscale_mask = np.vectorize(self.__grayscale_mask)
+    def __get_ascii_data(self, data: np.ndarray,
+                         width: int, height: int) -> np.chararray:
+        img_data = (
+                data.reshape((height, width))
+                / 255.0
+                * (len(self.grayscale_level) - 1)
+        ).astype(np.int)
+        vectorized_grayscale_mask = np.vectorize(self.__apply_grayscale_mask)
         return vectorized_grayscale_mask(img_data, self.grayscale_level)
 
-    def __compute_art_size(self, win_width: int, win_height: int) -> (int, int):
+    def __compute_art_size(self,
+                           win_width: int, win_height: int) -> Tuple[int, int]:
         ascii_h: int
         ascii_w: int
         if win_height >= win_width:
@@ -110,27 +122,31 @@ class Image:
                 ascii_h = win_height
             else:
                 ascii_w = win_width
-        return int(ascii_w), int(ascii_h)
+        return ascii_w, ascii_h
 
     @normalize_uint8
-    def __compute_kernel(self, kernel: np.ndarray, data: np.ndarray, color_space: int) -> np.ndarray:
+    def __compute_kernel(self,
+                         kernel: np.ndarray, data: np.ndarray,
+                         color_space: int) -> np.ndarray:
         kernelized_colls = []
         for y in range(color_space):
-            rolled_rows: np.ndarray = np.roll(data.astype(np.int8), y - 1, axis=0)
+            rolled_rows = np.roll(data.astype(np.int8), y - 1, axis=0)
             for x in range(color_space):
-                rolled_colls: np.ndarray = np.roll(rolled_rows, x - 1, axis=1)
+                rolled_colls = np.roll(rolled_rows, x - 1, axis=1)
                 kernelized_colls.append(rolled_colls * kernel[y, x])
         kernelized_data = np.sum(kernelized_colls, axis=0)
         return kernelized_data
 
     def __convolution(self, data: np.ndarray, color_space: int) -> np.ndarray:
-        convolution_kernel: np.ndarray = np.array(Consts.imageConsts["ConvolutionKernel"])
+        convolution_kernel = np.array(consts.imageConsts["ConvolutionKernel"])
         return self.__compute_kernel(convolution_kernel, data, color_space)
 
     @normalize_uint8
-    def __contrast(self, data: np.ndarray, contrast_level: float = 255.0) -> np.ndarray:
-        factor: float = (259.0 * (contrast_level + 255.0)) / (255.0 * (259.0 - contrast_level))
-        non_trunc_contrasted: np.ndarray = (data.astype(np.float) - 128) * factor + 128
+    def __contrast(self, data: np.ndarray) -> np.ndarray:
+        contrast_level = 255.0
+        factor: float = (259.0 * (contrast_level + 255.0)
+                         / 255.0 * (259.0 - contrast_level))
+        non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
         return non_trunc_contrasted
 
     @staticmethod
@@ -139,15 +155,17 @@ class Image:
 
     @staticmethod
     def __rgb_to_gray(data: np.ndarray) -> np.ndarray:
-        gamma_compressed: np.ndarray = data / 255.0
-        linear: np.ndarray = np.where(
+        gamma_compressed = data / 255.0
+        linear = np.where(
             gamma_compressed <= 0.04045,
             gamma_compressed / 12.92,
             ((gamma_compressed + 0.055) / 1.055) ** 2.4
         )
-        linear_luminance: np.ndarray = linear @ np.array(Consts.imageConsts["LuminanceCoefficients"]).T
+        linear_luminance = linear @ np.array(
+            consts.imageConsts["LuminanceCoefficients"]
+        ).T
         return (linear_luminance * 255).astype(np.uint8)
 
     @staticmethod
-    def __grayscale_mask(index: int, grayscale_level: str) -> str:
+    def __apply_grayscale_mask(index: int, grayscale_level: str) -> str:
         return grayscale_level[index]

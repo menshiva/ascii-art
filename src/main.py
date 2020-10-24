@@ -1,6 +1,6 @@
-from src.factory.ArtFactory import ArtFactory
-from src.gui.Gui import Gui
-from src.image.Image import Image
+from src.factory.art_factory import ArtFactory
+from src.gui.gui import Gui
+from src.image.image import Image
 
 
 def add_edit_art(gui: Gui, index: int, image: Image) -> None:
@@ -41,7 +41,8 @@ def open_art_dialog(gui: Gui, index: int) -> None:
     else:
         image = gui.artFactory[index]
         gui.addImageDialog.openDialog(
-            index, image.name, image.path, image.is_contrast, image.is_negative, image.is_convolution
+            index, image.name, image.path,
+            image.is_contrast, image.is_negative, image.is_convolution
         )
 
 
