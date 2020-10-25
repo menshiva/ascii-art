@@ -1,6 +1,6 @@
-from src.factory.art_factory import ArtFactory
-from src.gui.gui import Gui
-from src.image.image import Image
+from src.factory import ArtFactory
+from src.gui import Gui
+from src.image import Image
 
 
 def add_edit_art(gui: Gui, index: int, image: Image) -> None:

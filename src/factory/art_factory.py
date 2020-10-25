@@ -3,7 +3,7 @@ from typing import List, Dict, Final, Iterator
 
 from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
 
-from src.image.image import Image
+from src.image import Image
 
 
 class ArtFactory(QAbstractListModel):

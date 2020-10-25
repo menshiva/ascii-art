@@ -11,10 +11,10 @@ from PySide2.QtQml import QQmlApplicationEngine, QQmlProperty
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtWidgets import QApplication, QFileDialog
 
-from src.factory.art_factory import ArtFactory
-from src.gui.res import layout
-from src.image.image import Image
+from src.factory import ArtFactory
+from src.image import Image
 from src.util.consts import uiConsts
+from . import res
 
 
 class Gui(QObject):
@@ -65,7 +65,7 @@ class Gui(QObject):
         self.__engine.rootContext().setContextProperty(
             "ArtFactory", self.artFactory
         )
-        self.__engine.load(layout.get_main_qml())
+        self.__engine.load(res.get_main_qml())
 
         if not self.__engine.rootObjects():
             sys.exit(-1)
