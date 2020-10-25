@@ -24,10 +24,10 @@ uiConsts = {
     "DefaultArtSize": 10,
     "DefaultAnimationDuration": 1.0,
 
-    "ProjectName": "ASCII art",
+    "ProjectName": "ASCII Art",
     "AuthorName": "Ivan Menshikov",
-    "AuthorEmail": "menshiva@fit.cvut.cz",
-    "ToolbarTitle": "ASCII art",
+    "ProjectDomain": "https://gitlab.fit.cvut.cz/BI-PYT/b201/menshiva/tree/ascii-art",
+    "ToolbarTitle": "ASCII Art",
     "DrawerTitle": "Image list",
     "PlayButtonText": "Play animation",
     "StopButtonText": "Stop animation",

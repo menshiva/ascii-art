@@ -57,7 +57,8 @@ class Gui(QObject):
         self.__app = QApplication(sys.argv)
         self.__app.setApplicationName(uiConsts["ProjectName"])
         self.__app.setOrganizationName(uiConsts["AuthorName"])
-        self.__app.setOrganizationDomain(uiConsts["AuthorEmail"])
+        self.__app.setOrganizationDomain(uiConsts["ProjectDomain"])
+        self.__app.setWindowIcon(res.get_app_icon())
 
         self.__engine = QQmlApplicationEngine()
         self.__engine.rootContext().setContextProperty("Consts", uiConsts)
@@ -65,7 +66,7 @@ class Gui(QObject):
         self.__engine.rootContext().setContextProperty(
             "ArtFactory", self.artFactory
         )
-        self.__engine.load(res.get_main_qml())
+        self.__engine.load(res.get_main_qml_path())
 
         if not self.__engine.rootObjects():
             sys.exit(-1)
