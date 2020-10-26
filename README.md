@@ -5,9 +5,10 @@
     </h1>
     <h4 align="center">A minimal image to ASCII art convertation desktop app.</h4>
     <p align="center">
-        <a href="#key-features-">Key Features</a> |
-        <a href="#dependencies-">Dependencies</a> |
-        <a href="#credits-">Credits</a>
+        <a href="#key-features-">Key Features 🍪</a> |
+        <a href="#dependencies-">Dependencies 🧬</a> |
+        <a href="#build-">Build 🚀</a> |
+        <a href="#credits-">Credits ✍</a>
     </p>
     <h1 align="center">
         <img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Preview">
@@ -31,15 +32,41 @@
 
 Minimal requirements:
 * Python 3.8.1
-* PySide2 5.15.1
 * NumPy 1.19.2
+* PySide2 5.15.1
 * imageio 2.9.0
+
+## Build 🚀
+
+#### Download
+Download this project manually with download button or run from your command line:
+```bash
+$ git clone --single-branch --branch ascii-art https://gitlab.fit.cvut.cz/BI-PYT/b201/menshiva.git
+```
+
+#### Change working directory
+Change your working directory with command:
+```bash
+$ cd menshiva
+```
+
+#### Install dependencies
+Run this command to install all necessary dependencies:
+```bash
+$ pip install -r requirements.txt
+```
+
+#### Run application
+Use this command to run ASCII Art:
+```bash
+$ python3 app.py
+```
 
 ## Credits ✍
 
 #### Third-party libraries
-* [Qt for Python](https://wiki.qt.io/Qt_for_Python)
 * [NumPy](https://numpy.org/)
+* [Qt for Python](https://wiki.qt.io/Qt_for_Python)
 * [imageio](https://imageio.github.io/)
 
 #### Sources of used algorithms
