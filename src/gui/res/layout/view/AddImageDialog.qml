@@ -192,6 +192,7 @@ Dialog {
 
     function openDialog(index, name, path, contrast, negative, convolution) {
         itemIndex = index
+        browseImgBtn.enabled = index == -1
         addImageDialogNameBox.text = name
         addImageDialogPathBox.text = path
         contrastEffect.checked = contrast
