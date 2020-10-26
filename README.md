@@ -1,6 +1,6 @@
 <dl>
     <h1 align="center">
-        <img src="./img/logo.png" alt="ASCII Art" width="192">
+        <img src="img/logo.png" alt="ASCII Art" width="192">
         <br><br>ASCII Art<br>
     </h1>
     <h4 align="center">A minimal image to ASCII art convertation desktop app.</h4>
@@ -8,20 +8,22 @@
         <a href="#key-features-">Key Features 🍪</a> |
         <a href="#dependencies-">Dependencies 🧬</a> |
         <a href="#build-">Build 🚀</a> |
+        <a href="#how-to-use-">How to Use 📃</a> |
         <a href="#credits-">Credits ✍</a>
     </p>
     <h1 align="center">
-        <img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Preview">
+        <img src="img/preview.gif" alt="Preview">
     </h1>
 </dl>
 
 ## Key Features 🍪
 
 * Supporting JPEG, PNG, PPM, PGM image formats
-* Light / Dark mode
+* Light / Dark theme
 * ASCII art symbols size adjustment
 * Your own ASCII art symbol style!
-* ASCII art animation with speed adjustment
+* Preserve an image's aspect ratio
+* ASCII art animation with duration adjustment
 * Export art to .txt file in full image resolution
 * Supporting art effects:
   - _Contrast_
@@ -61,6 +63,51 @@ Use this command to run ASCII Art:
 ```bash
 $ python3 app.py
 ```
+
+## How to Use 📃
+
+#### Basics
+1) [Build and run](#build-) application
+2) Press the _menu_ button in toolbar to open image list drawer
+3) Press the _Add image_ button to add image
+4) In popup dialog:
+   - Fill the _Art name_ box **(required)**
+   - Choose path to image from file browser via _Browse_ button **(required)**
+   - Choose effects to apply on your art _(optional)_
+5) Press the _Add_ button and wait for image to convert
+6) **Enjoy** your ASCII art!
+
+#### Image properties
+* To edit your image (change art name or apply new effects):
+  1) Press the three dots below the needed image 
+  2) Click on _Properties_ button
+  3) Apply your changes
+  4) Press the _Save_ button and wait for image to re-convert
+* To remove image from list:
+  1) Press the three dots under below the needed image
+  2) Press the _Remove image_ button
+* To export image to _.txt_ file:
+  1) Press the three dots under below the needed image
+  2) Press the _Export to text file_ button
+  3) Create new text file from opened file browser
+
+#### Animation
+* To enable this function you need to add **at least 2 images**
+* Animation controls:
+  1) Click on _Play animation_ button in toolbar to start animation
+  2) Click on _Stop animation_ button in toolbar to stop animation
+
+#### Settings
+1) Press the three dots in toolbar 
+2) Press _Settings_ button
+
+#### Optional utils
+* **Adjust ASCII art size** by slider in toolbar
+* Switch between **Light and Dark** theme in [Settings](#Settings) in _Theme_ section
+* **Adjust animation duration** by slider in [Settings](#Settings) in _Animation duration_ section
+* **Style ASCII art** with your own symbols in [Settings](#Settings) in _Grayscale level_ section:
+  - You need to enter the sequence of symbols from darkest to lightest
+  - Your ASCII art will be shown by these symbols
 
 ## Credits ✍
 

@@ -52,7 +52,7 @@ uiConsts = {
     "SettingsThemeTitle": "Theme",
     "SettingsThemeModels": ["Light", "Dark"],
     "SettingsGSLevelTitle": "Grayscale level",
-    "SettingsGSLevelTooltip": "Enter sequence of symbols from darkest to lightest. "
+    "SettingsGSLevelTooltip": "Enter the sequence of symbols from darkest to lightest. "
                               "Your ASCII art will be shown by these symbols. "
                               "(Leave the field empty to use the default grayscale level)",
     "AddImageDialogRequiredTootlip": "Required field",
