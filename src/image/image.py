@@ -3,14 +3,15 @@ from dataclasses import dataclass, field
 from typing import Tuple, Callable, Any
 
 import numpy as np
+from numpy import fft
 from imageio import imread
 
 from src.util import consts
 
 
-def normalize_uint8(func: Callable[[Image, Any], np.ndarray]) -> np.ndarray:
-    def wrapper(self, *args) -> np.ndarray:
-        data = func(self, *args)
+def normalize_uint8(func: Callable[[Any], np.ndarray]) -> np.ndarray:
+    def wrapper(*args) -> np.ndarray:
+        data = func(*args)
         data[data < 0] = 0
         data[data > 255] = 255
         return data.astype(np.uint8)
@@ -62,20 +63,20 @@ class Image:
             self.__color_space = 1
 
     def convert_to_ascii_art(self) -> None:
-        self.grayscale_level = consts.uiConsts[
-            "DefaultGrayscaleLevel"
-        ] if not self.grayscale_level else self.grayscale_level.strip()
-        gray_data = self.__img_data.copy()
-        if self.is_convolution:
-            gray_data = self.__convolution(gray_data, self.__color_space)
+        self.grayscale_level = self.grayscale_level.strip()
+        if not self.grayscale_level:
+            self.grayscale_level = consts.uiConsts["DefaultGrayscaleLevel"]
+        img_copy = self.__img_data.copy()
         if self.is_negative:
-            gray_data = self.__negative(gray_data)
+            img_copy = self.__negative(img_copy)
         if self.is_contrast:
-            gray_data = self.__contrast(gray_data)
+            img_copy = self.__contrast(img_copy)
         if self.__color_space > 1:
-            gray_data = self.__rgb_to_gray(gray_data)
+            img_copy = self.__rgb_to_gray(img_copy)
+        if self.is_convolution:
+            img_copy = self.__convolution(img_copy)
         self.__ascii_data = self.__get_ascii_data(
-            gray_data,
+            img_copy,
             self.__width, self.__height
         )
         self.__cached_ascii_data = self.__ascii_data.copy()
@@ -124,34 +125,44 @@ class Image:
                 ascii_w = win_width
         return ascii_w, ascii_h
 
-    @normalize_uint8
-    def __compute_kernel(self,
-                         kernel: np.ndarray, data: np.ndarray,
-                         color_space: int) -> np.ndarray:
-        kernelized_colls = []
-        for y in range(color_space):
-            rolled_rows = np.roll(data.astype(np.int8), y - 1, axis=0)
-            for x in range(color_space):
-                rolled_colls = np.roll(rolled_rows, x - 1, axis=1)
-                kernelized_colls.append(rolled_colls * kernel[y, x])
-        kernelized_data = np.sum(kernelized_colls, axis=0)
-        return kernelized_data
-
-    def __convolution(self, data: np.ndarray, color_space: int) -> np.ndarray:
-        convolution_kernel = np.array(consts.imageConsts["ConvolutionKernel"])
-        return self.__compute_kernel(convolution_kernel, data, color_space)
-
-    @normalize_uint8
-    def __contrast(self, data: np.ndarray) -> np.ndarray:
-        contrast_level = 255.0
-        factor: float = (259.0 * (contrast_level + 255.0)
-                         / 255.0 * (259.0 - contrast_level))
-        non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
-        return non_trunc_contrasted
-
     @staticmethod
     def __negative(data: np.ndarray) -> np.ndarray:
         return 255 - data
+
+    @staticmethod
+    @normalize_uint8
+    def __contrast(data: np.ndarray) -> np.ndarray:
+        contrast_level = 255.0
+        factor = ((259.0 * (contrast_level + 255.0))
+                  / (255.0 * (259.0 - contrast_level)))
+        non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
+        return non_trunc_contrasted
+
+    def __convolution(self, data: np.ndarray) -> np.ndarray:
+        convolution_kernel = np.array(consts.imageConsts["ConvolutionKernel"])
+        return self.__compute_kernel(data, convolution_kernel)
+
+    def __emboss(self, data: np.ndarray) -> np.ndarray:
+        emboss_kernel = np.array(consts.imageConsts["EmbossKernel"])
+        return self.__compute_kernel(data, emboss_kernel)
+
+    @staticmethod
+    @normalize_uint8
+    def __compute_kernel(data: np.ndarray, kernel: np.ndarray) -> np.ndarray:
+        new_h = (data.shape[0] - kernel.shape[0]) // 2
+        new_w = (data.shape[1] - kernel.shape[1]) // 2
+        kernel = np.pad(kernel, (
+            (new_h, new_h + int(data.shape[0] % 2 == 0)),
+            (new_w, new_w + int(data.shape[1] % 2 == 0))
+        ))
+
+        data_transformed = fft.fft2(data)
+        kernel_flipped_transormed = fft.fft2(np.flipud(np.fliplr(kernel)))
+        h, w = data_transformed.shape
+        kernelized = np.real(fft.ifft2(data_transformed * kernel_flipped_transormed))
+        kernelized = np.roll(kernelized, -h // 2 + 1, axis=0)
+        kernelized = np.roll(kernelized, -w // 2 + 1, axis=1)
+        return kernelized
 
     @staticmethod
     def __rgb_to_gray(data: np.ndarray) -> np.ndarray:
