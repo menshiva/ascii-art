@@ -43,6 +43,10 @@ class Image:
     __ascii_data: np.chararray = field(init=False)
     __cached_ascii_data: np.chararray = field(init=False)
 
+    @format_output_ascii
+    def __str__(self) -> np.ndarray:
+        return self.__ascii_data
+
     def __post_init__(self) -> None:
         if not self.path:
             return
@@ -90,10 +94,6 @@ class Image:
             ]).view(np.chararray)
         return self.__cached_ascii_data
 
-    @format_output_ascii
-    def export_art(self) -> np.ndarray:
-        return self.__ascii_data
-
     def __get_ascii_data(self, data: np.ndarray,
                          width: int, height: int) -> np.chararray:
         img_data = (
@@ -101,8 +101,8 @@ class Image:
                 / 255.0
                 * (len(self.grayscale_level) - 1)
         ).astype(np.int)
-        vectorized_grayscale_mask = np.vectorize(self.__apply_grayscale_mask)
-        return vectorized_grayscale_mask(img_data, self.grayscale_level)
+        apply_mask_vectorized = np.vectorize(self.__apply_grayscale_mask)
+        return apply_mask_vectorized(img_data, self.grayscale_level)
 
     def __compute_art_size(self,
                            win_width: int, win_height: int) -> Tuple[int, int]:

@@ -115,6 +115,9 @@ class Gui(QObject):
     def set_play_animation_button_enable(self, enable: bool) -> None:
         self.__get_property(self.__playAnimBtn, "enabled").write(enable)
 
+    def exec(self) -> None:
+        sys.exit(self.__app.exec_())
+
     @Slot(int, str, str, bool, bool, bool, str)
     def __add_edit_art(self, index: int, name: str, path: str,
                        contrast: bool, negative: bool, convolution: bool,
@@ -181,7 +184,7 @@ class Gui(QObject):
         if files and files[0]:
             f = open(files[0], "w+")
             # noinspection PyTypeChecker
-            f.write(self.artFactory[index].export_art())
+            f.write(str(self.artFactory[index]))
             f.close()
 
     @Slot(int)
@@ -207,9 +210,6 @@ class Gui(QObject):
             len(self.artFactory), duration,
             self.__animationThreadSignal, self.__animationStopEvent
         ))
-
-    def exec(self) -> None:
-        sys.exit(self.__app.exec_())
 
     @staticmethod
     def __animation_thread(factory_size: int, duration: float,

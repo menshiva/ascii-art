@@ -9,6 +9,7 @@
         <a href="#dependencies-">Dependencies 🧬</a> |
         <a href="#build-">Build 🚀</a> |
         <a href="#how-to-use-">How to Use 📃</a> |
+        <a href="#solving-problems-">Solving Problems 🐛</a> |
         <a href="#credits-">Credits ✍</a>
     </p>
     <h1 align="center">
@@ -109,6 +110,21 @@ $ python3 app.py
   - You need to enter the sequence of symbols from darkest to lightest
   - Your ASCII art will be shown by these symbols
 
+## Solving Problems 🐛
+
+#### Could not load the Qt platform plugin
+* If you are getting this error while trying to run _app.py_:
+```bash
+Could not load the Qt platform plugin "xcb" in "" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Aborted (core dumped)
+```
+Then you need to **install** _libxcb-xinerama0_ via command line:
+```bash
+$ sudo apt-get install libxcb-xinerama0
+```
+
 ## Credits ✍
 
 #### Third-party libraries
@@ -116,7 +132,7 @@ $ python3 app.py
 * [Qt for Python](https://wiki.qt.io/Qt_for_Python)
 * [imageio](https://imageio.github.io/)
 
-#### Sources of used algorithms
+#### Used algorithms
 * [Image scailing algorithm](https://en.wikipedia.org/wiki/Image_scaling#Nearest-neighbor_interpolation)
 * [RGB to grayscale preserving luminance algorithm](https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale)
 * [Contrast effect algorithm](https://en.wikipedia.org/wiki/Contrast_(vision))
