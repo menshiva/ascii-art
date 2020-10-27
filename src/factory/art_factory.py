@@ -13,7 +13,7 @@ class ArtFactory(QAbstractListModel):
     __NEGATIVE_ROLE: Final = Qt.CheckStateRole + 1
     __CONVOLUTION_ROLE: Final = Qt.CheckStateRole + 2
     __arts: List[Image] = []
-    lastDrawedArt: int = -1
+    loaded_image: Image = None
 
     def __add__(self, item: Image) -> ArtFactory:
         self.beginInsertRows(QModelIndex(), 0, 0)

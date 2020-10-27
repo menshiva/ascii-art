@@ -4,6 +4,7 @@ import sys
 import time
 from threading import Thread, Event
 from typing import Callable, Tuple
+from pathlib import Path
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
 from PySide2.QtGui import QFontMetrics
@@ -19,14 +20,14 @@ from . import res
 
 class Gui(QObject):
     artFactory: ArtFactory
-    __imgThreadSignal: Signal = Signal(int, Image)
+    __imageThreadSignal: Signal = Signal(int)
     __animationThreadSignal: Signal = Signal(int)
     __animationThread: Thread
     __animationStopEvent: Event
 
     __app: QApplication
     __engine: QQmlApplicationEngine
-    __open_img_dialog: QFileDialog
+    __open_file_dialog: QFileDialog
     __root: QObject
     __settings: QObject
     __artLayout: QObject
@@ -34,20 +35,21 @@ class Gui(QObject):
     __artSizeSlider: QObject
     __playAnimBtn: QObject
     __stopAnimBtn: QObject
-    addImageDialog: QObject
+    imageDialog: QObject
 
-    onAddEditArtCallback: Callable[[Gui, int, Image], None]
-    onImageProcessed: Callable[[Gui, int, Image], None]
-    onRemoveArtCallback: Callable[[Gui, int], None]
-    onOpenArtDialogCallback: Callable[[Gui, int], None]
-    onDrawArtCallback: Callable[[Gui, int], None]
-    onApplyGrayscale: Callable[[Gui, str], None]
+    on_open_art_dialog: Callable[[Gui, int], None]
+    on_preview_art: Callable[[Gui, Image], None]
+    on_image_processed: Callable[[Gui, int], None]
+    on_add_edit_art: Callable[[Gui, int, str], None]
+    on_draw_art: Callable[[Gui, int], None]
+    on_remove_art: Callable[[Gui, int], None]
+    on_apply_grayscale: Callable[[Gui, str], None]
 
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
         self.artFactory = art_factory
         # noinspection PyUnresolvedReferences
-        self.__imgThreadSignal.connect(self.__on_image_processed)
+        self.__imageThreadSignal.connect(self.__on_image_processed)
         # noinspection PyUnresolvedReferences
         self.__animationThreadSignal.connect(self.__art_list_change_index)
 
@@ -78,21 +80,23 @@ class Gui(QObject):
         self.__artSizeSlider = self.__root.findChild(QObject, "artSizeSlider")
         self.__playAnimBtn = self.__root.findChild(QObject, "playAnimBtn")
         self.__stopAnimBtn = self.__root.findChild(QObject, "stopAnimBtn")
-        self.addImageDialog = self.__root.findChild(QObject, "addImageDialog")
+        self.imageDialog = self.__root.findChild(QObject, "imageDialog")
 
         self.__artList.currentItemChanged.connect(self.__draw_art)
         self.__init_animation_thread()
-        self.__init_open_img_dialog()
+        self.__init_open_file_dialog()
 
     def __del__(self) -> None:
+        Path(os.path.join(sys.path[0], "tmp.ppm")).unlink(True)
         try:
             self.__artList.currentItemChanged.disconnect(self.__draw_art)
         except RuntimeError:
             pass
 
-    def process_image_background(self, index: int, img: Image) -> None:
+    def process_image_background(self, index: int, image: Image) -> None:
+        self.artFactory.loaded_image = image
         Thread(target=self.__image_processing_thread, args=(
-            index, img, self.__imgThreadSignal
+            index, image, self.__imageThreadSignal
         )).start()
 
     def compute_art_label_size(self) -> Tuple[int, int]:
@@ -115,45 +119,53 @@ class Gui(QObject):
     def set_play_animation_button_enable(self, enable: bool) -> None:
         self.__get_property(self.__playAnimBtn, "enabled").write(enable)
 
+    def get_current_art_list_index(self) -> int:
+        return int(self.__get_property(self.__artList, "currentIndex").read())
+
     def exec(self) -> None:
         sys.exit(self.__app.exec_())
 
-    @Slot(int, str, str, bool, bool, bool, str)
-    def __add_edit_art(self, index: int, name: str, path: str,
-                       contrast: bool, negative: bool, convolution: bool,
-                       grayscale: str) -> None:
-        self.onAddEditArtCallback(
-            self,
-            index,
-            Image(name, path, contrast, negative, convolution, grayscale)
-        )
-
-    @Slot(int, Image)
-    def __on_image_processed(self, index: int, img: Image) -> None:
-        self.onImageProcessed(self, index, img)
-
-    @Slot(int)
-    def __remove_art(self, index: int) -> None:
-        self.onRemoveArtCallback(self, index)
-
     @Slot(int)
     def __open_art_dialog(self, index: int) -> None:
-        self.onOpenArtDialogCallback(self, index)
+        self.on_open_art_dialog(self, index)
+
+    @Slot(str, str, bool, bool, bool, bool, str)
+    def __preview_art(self, name: str, path: str,
+                      contrast: bool, negative: bool,
+                      convolution: bool, emboss: bool,
+                      grayscale: str) -> None:
+        self.on_preview_art(self, Image(
+            name, path,
+            contrast, negative,
+            convolution, emboss,
+            grayscale
+        ))
+
+    @Slot(int)
+    def __on_image_processed(self, index: int) -> None:
+        self.on_image_processed(self, index)
+
+    @Slot(int, str)
+    def __add_edit_art(self, index: int, name: str) -> None:
+        self.on_add_edit_art(self, index, name)
 
     @Slot()
     def __draw_art(self) -> None:
-        index = int(self.__get_property(self.__artList, "currentIndex").read())
-        self.onDrawArtCallback(self, index)
+        self.on_draw_art(self, self.get_current_art_list_index())
+
+    @Slot(int)
+    def __remove_art(self, index: int) -> None:
+        self.on_remove_art(self, index)
 
     @Slot(str)
     def __apply_grayscale(self, new_grayscale: str) -> None:
-        self.onApplyGrayscale(self, new_grayscale)
+        self.on_apply_grayscale(self, new_grayscale)
 
     # noinspection PyTypeChecker
     @Slot(result=str)
     def __browse_files(self) -> str:
-        if self.__open_img_dialog.exec_():
-            selected_files = self.__open_img_dialog.selectedFiles()
+        if self.__open_file_dialog.exec_():
+            selected_files = self.__open_file_dialog.selectedFiles()
             if selected_files:
                 return selected_files[0]
         return ""
@@ -193,11 +205,11 @@ class Gui(QObject):
             self.__artList, "currentIndex"
         ).write(index)
 
-    def __init_open_img_dialog(self) -> None:
-        self.__open_img_dialog = QFileDialog()
-        self.__open_img_dialog.setWindowTitle("Open image")
-        self.__open_img_dialog.setFileMode(QFileDialog.ExistingFile)
-        self.__open_img_dialog.setNameFilter(
+    def __init_open_file_dialog(self) -> None:
+        self.__open_file_dialog = QFileDialog()
+        self.__open_file_dialog.setWindowTitle("Open image")
+        self.__open_file_dialog.setFileMode(QFileDialog.ExistingFile)
+        self.__open_file_dialog.setNameFilter(
             f"Images ({uiConsts['SupportedImageFormats']})"
         )
 
@@ -222,10 +234,10 @@ class Gui(QObject):
                 time.sleep(duration)
 
     @staticmethod
-    def __image_processing_thread(index: int, img: Image,
-                                  signal: Signal[Image, int]) -> None:
-        img.convert_to_ascii_art()
-        signal.emit(index, img)
+    def __image_processing_thread(index: int, image: Image,
+                                  signal: Signal[int]) -> None:
+        image.convert_to_ascii_art()
+        signal.emit(index)
 
     @staticmethod
     def __get_property(element: QObject, prop: str) -> QQmlProperty:

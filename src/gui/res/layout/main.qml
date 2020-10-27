@@ -28,9 +28,16 @@ ApplicationWindow {
         source: Consts.FontSrc
     }
 
-    header: MainToolbar {}
+    MainToolbar {
+        id: toolbar
+        anchors.left: parent.left
+        anchors.right: parent.right
+    }
     GroupBox {
-        anchors.fill: parent
+        anchors.top: toolbar.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.margins: Consts.ArtLayoutMargins
 
         Label {
@@ -48,9 +55,6 @@ ApplicationWindow {
         }
     }
     SideDrawer { id: drawer }
-    AddImageDialog {
-        id: addImageDialog
-        objectName: "addImageDialog"
-    }
+    ImageDialog { objectName: "imageDialog" }
     SettingsDialog { id: settingsDialog }
 }

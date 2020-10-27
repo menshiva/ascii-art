@@ -6,7 +6,8 @@ import QtGraphicalEffects 1.15
 
 Dialog {
     width: parent.width * Consts.DialogWidthCoefficient
-    anchors.centerIn: Overlay.overlay
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
     title: Consts.SettingsButtonText
     modal: true
     closePolicy: Popup.NoAutoClose

@@ -36,10 +36,12 @@ class Image:
     is_contrast: bool
     is_negative: bool
     is_convolution: bool
+    is_emboss: bool
     grayscale_level: str
     __width: int = field(init=False)
     __height: int = field(init=False)
     __color_space: int = field(init=False)
+    __img_source_data: np.ndarray = field(init=False)
     __img_data: np.ndarray = field(init=False)
     __ascii_data: np.chararray = field(init=False)
     __cached_ascii_data: np.chararray = field(init=False)
@@ -51,12 +53,12 @@ class Image:
     def __post_init__(self) -> None:
         if not self.path:
             return
-        self.__img_data = np.asarray(imread(self.path))
-        img_info = self.__img_data.shape
+        self.__img_source_data = np.asarray(imread(self.path))
+        img_info = self.__img_source_data.shape
         if len(img_info) == 3:
             self.__height, self.__width, self.__color_space = img_info
             if self.__color_space > 3:
-                self.__img_data = self.__img_data[:, :, :3]
+                self.__img_source_data = self.__img_source_data[:, :, :3]
                 self.__color_space = 3
         else:
             self.__height, self.__width = img_info
@@ -66,17 +68,19 @@ class Image:
         self.grayscale_level = self.grayscale_level.strip()
         if not self.grayscale_level:
             self.grayscale_level = consts.uiConsts["DefaultGrayscaleLevel"]
-        img_copy = self.__img_data.copy()
+        self.__img_data = self.__img_source_data.copy()
         if self.is_negative:
-            img_copy = self.__negative(img_copy)
+            self.__img_data = self.__negative(self.__img_data)
         if self.is_contrast:
-            img_copy = self.__contrast(img_copy)
+            self.__img_data = self.__contrast(self.__img_data)
         if self.__color_space > 1:
-            img_copy = self.__rgb_to_gray(img_copy)
+            self.__img_data = self.__rgb_to_gray(self.__img_data)
         if self.is_convolution:
-            img_copy = self.__convolution(img_copy)
+            self.__img_data = self.__convolution(self.__img_data)
+        if self.is_emboss:
+            self.__img_data = self.__emboss(self.__img_data)
         self.__ascii_data = self.__get_ascii_data(
-            img_copy,
+            self.__img_data,
             self.__width, self.__height
         )
         self.__cached_ascii_data = self.__ascii_data.copy()
@@ -94,6 +98,9 @@ class Image:
                  ] for y in range(ascii_h)
             ]).view(np.chararray)
         return self.__cached_ascii_data
+
+    def get_image_data(self) -> np.ndarray:
+        return self.__img_data
 
     def __get_ascii_data(self, data: np.ndarray,
                          width: int, height: int) -> np.chararray:
@@ -159,7 +166,9 @@ class Image:
         data_transformed = fft.fft2(data)
         kernel_flipped_transormed = fft.fft2(np.flipud(np.fliplr(kernel)))
         h, w = data_transformed.shape
-        kernelized = np.real(fft.ifft2(data_transformed * kernel_flipped_transormed))
+        kernelized = np.real(
+            fft.ifft2(data_transformed * kernel_flipped_transormed)
+        )
         kernelized = np.roll(kernelized, -h // 2 + 1, axis=0)
         kernelized = np.roll(kernelized, -w // 2 + 1, axis=1)
         return kernelized
