@@ -7,31 +7,28 @@ from src.image import Image
 
 
 class ArtFactory(QAbstractListModel):
-    __NAME_ROLE: Final = Qt.DisplayRole
-    __IMAGE_ROLE: Final = Qt.DecorationRole
-    __CONTRAST_ROLE: Final = Qt.CheckStateRole
-    __NEGATIVE_ROLE: Final = Qt.CheckStateRole + 1
-    __CONVOLUTION_ROLE: Final = Qt.CheckStateRole + 2
+    __NAME_ROLE: Final[int] = Qt.DisplayRole
+    __IMAGE_ROLE: Final[int] = Qt.DecorationRole
     __arts: List[Image] = []
     loaded_image: Image = None
 
-    def __add__(self, item: Image) -> ArtFactory:
+    def __add__(self, new_image: Image) -> ArtFactory:
         self.beginInsertRows(QModelIndex(), 0, 0)
-        self.__arts.insert(0, item)
+        self.__arts.insert(0, new_image)
         self.endInsertRows()
         return self
 
-    def __setitem__(self, key: int, new_img: Image) -> None:
-        row = self.index(key)
-        self.__arts[key] = new_img
+    def __setitem__(self, index: int, new_image: Image) -> None:
+        row = self.index(index)
+        self.__arts[index] = new_image
         self.dataChanged.emit(row, row, self.roleNames())
 
-    def __getitem__(self, key: int) -> Image:
-        return self.__arts[key]
+    def __getitem__(self, index: int) -> Image:
+        return self.__arts[index]
 
-    def __delitem__(self, key: int) -> None:
-        self.beginRemoveColumns(QModelIndex(), key, key)
-        del self.__arts[key]
+    def __delitem__(self, index: int) -> None:
+        self.beginRemoveColumns(QModelIndex(), index, index)
+        del self.__arts[index]
         self.endRemoveRows()
 
     def __len__(self) -> int:
@@ -47,10 +44,7 @@ class ArtFactory(QAbstractListModel):
         row = index.row()
         return {
             self.__NAME_ROLE: self.__arts[row].name,
-            self.__IMAGE_ROLE: self.__arts[row].path,
-            self.__CONTRAST_ROLE: self.__arts[row].is_contrast,
-            self.__NEGATIVE_ROLE: self.__arts[row].is_negative,
-            self.__CONVOLUTION_ROLE: self.__arts[row].is_convolution,
+            self.__IMAGE_ROLE: self.__arts[row].path
         }[role]
 
     def rowCount(self, parent=QModelIndex()) -> int:
@@ -59,8 +53,5 @@ class ArtFactory(QAbstractListModel):
     def roleNames(self) -> Dict[int, bytes]:
         return {
             self.__NAME_ROLE: b"name",
-            self.__IMAGE_ROLE: b"path",
-            self.__CONTRAST_ROLE: b"contrast",
-            self.__NEGATIVE_ROLE: b"negative",
-            self.__CONVOLUTION_ROLE: b"convolution"
+            self.__IMAGE_ROLE: b"path"
         }

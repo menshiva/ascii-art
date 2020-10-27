@@ -19,23 +19,23 @@ from . import res
 
 
 class Gui(QObject):
-    artFactory: ArtFactory
-    __imageThreadSignal: Signal = Signal(int)
-    __animationThreadSignal: Signal = Signal(int)
-    __animationThread: Thread
-    __animationStopEvent: Event
+    art_factory: ArtFactory
+    __image_thread_signal: Signal = Signal(int)
+    __animation_thread_signal: Signal = Signal(int)
+    __animation_thread: Thread
+    __animation_stop_event: Event
 
     __app: QApplication
     __engine: QQmlApplicationEngine
     __open_file_dialog: QFileDialog
     __root: QObject
     __settings: QObject
-    __artLayout: QObject
-    __artList: QObject
-    __artSizeSlider: QObject
-    __playAnimBtn: QObject
-    __stopAnimBtn: QObject
-    imageDialog: QObject
+    __art_layout: QObject
+    __art_list: QObject
+    __art_size_slider: QObject
+    __play_anim_button: QObject
+    __stop_anim_Button: QObject
+    image_dialog: QObject
 
     on_open_art_dialog: Callable[[Gui, int], None]
     on_preview_art: Callable[[Gui, Image], None]
@@ -47,13 +47,14 @@ class Gui(QObject):
 
     def __init__(self, art_factory: ArtFactory) -> None:
         super().__init__()
-        self.artFactory = art_factory
+        self.art_factory = art_factory
         # noinspection PyUnresolvedReferences
-        self.__imageThreadSignal.connect(self.__on_image_processed)
+        self.__image_thread_signal.connect(self.__on_image_processed)
         # noinspection PyUnresolvedReferences
-        self.__animationThreadSignal.connect(self.__art_list_change_index)
+        self.__animation_thread_signal.connect(self.__art_list_change_index)
 
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
+        QApplication.setAttribute(Qt.AA_PluginApplication)
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
         QQuickStyle.setStyle("Material")
         self.__app = QApplication(sys.argv)
@@ -66,7 +67,7 @@ class Gui(QObject):
         self.__engine.rootContext().setContextProperty("Consts", uiConsts)
         self.__engine.rootContext().setContextProperty("Gui", self)
         self.__engine.rootContext().setContextProperty(
-            "ArtFactory", self.artFactory
+            "ArtFactory", self.art_factory
         )
         self.__engine.load(res.get_main_qml_path())
 
@@ -75,54 +76,54 @@ class Gui(QObject):
 
         self.__root = self.__engine.rootObjects()[0]
         self.__settings = self.__root.findChild(QObject, "settings")
-        self.__artLayout = self.__root.findChild(QObject, "artLayout")
-        self.__artList = self.__root.findChild(QObject, "artList")
-        self.__artSizeSlider = self.__root.findChild(QObject, "artSizeSlider")
-        self.__playAnimBtn = self.__root.findChild(QObject, "playAnimBtn")
-        self.__stopAnimBtn = self.__root.findChild(QObject, "stopAnimBtn")
-        self.imageDialog = self.__root.findChild(QObject, "imageDialog")
+        self.__art_layout = self.__root.findChild(QObject, "artLayout")
+        self.__art_list = self.__root.findChild(QObject, "artList")
+        self.__art_size_slider = self.__root.findChild(
+            QObject, "artSizeSlider"
+        )
+        self.__play_anim_button = self.__root.findChild(QObject, "playAnimBtn")
+        self.__stop_anim_Button = self.__root.findChild(QObject, "stopAnimBtn")
+        self.image_dialog = self.__root.findChild(QObject, "image_dialog")
 
-        self.__artList.currentItemChanged.connect(self.__draw_art)
+        self.__art_list.currentItemChanged.connect(self.__draw_art)
         self.__init_animation_thread()
         self.__init_open_file_dialog()
 
     def __del__(self) -> None:
         Path(os.path.join(sys.path[0], "tmp.ppm")).unlink(True)
-        try:
-            self.__artList.currentItemChanged.disconnect(self.__draw_art)
-        except RuntimeError:
-            pass
+        self.__stop_animation()
+        self.__art_list.currentItemChanged.disconnect(self.__draw_art)
+        self.__app.quit()
 
     def process_image_background(self, index: int, image: Image) -> None:
-        self.artFactory.loaded_image = image
-        Thread(target=self.__image_processing_thread, args=(
-            index, image, self.__imageThreadSignal
+        Thread(target=self.__image_thread_func, args=(
+            index, image, self.__image_thread_signal
         )).start()
 
-    def compute_art_label_size(self) -> Tuple[int, int]:
+    def compute_art_layout_size(self) -> Tuple[int, int]:
         art_width = int(self.__get_property(
-            self.__artLayout, "width"
+            self.__art_layout, "width"
         ).read())
         art_height = int(self.__get_property(
-            self.__artLayout, "height"
+            self.__art_layout, "height"
         ).read())
         fm = QFontMetrics(
-            self.__get_property(self.__artLayout, "font").read()
+            self.__get_property(self.__art_layout, "font").read()
         )
         char_width = art_width // fm.averageCharWidth()
         char_height = art_height // fm.height()
         return char_width, char_height
 
     def print_art(self, art: str) -> None:
-        self.__get_property(self.__artLayout, "text").write(art)
+        self.__get_property(self.__art_layout, "text").write(art)
 
     def set_play_animation_button_enable(self, enable: bool) -> None:
-        self.__get_property(self.__playAnimBtn, "enabled").write(enable)
+        self.__get_property(self.__play_anim_button, "enabled").write(enable)
 
     def get_current_art_list_index(self) -> int:
-        return int(self.__get_property(self.__artList, "currentIndex").read())
+        return int(self.__get_property(self.__art_list, "currentIndex").read())
 
-    def exec(self) -> None:
+    def show(self) -> None:
         sys.exit(self.__app.exec_())
 
     @Slot(int)
@@ -172,20 +173,26 @@ class Gui(QObject):
 
     @Slot()
     def __start_animation(self) -> None:
-        self.__get_property(self.__artSizeSlider, "enabled").write(False)
-        self.__get_property(self.__playAnimBtn, "enabled").write(False)
-        self.__get_property(self.__stopAnimBtn, "enabled").write(True)
+        self.__get_property(self.__art_size_slider, "enabled").write(False)
+        self.__get_property(self.__play_anim_button, "enabled").write(False)
+        self.__get_property(self.__stop_anim_Button, "enabled").write(True)
         self.__init_animation_thread()
-        self.__animationThread.start()
+        self.__animation_thread.start()
 
     @Slot()
     def __stop_animation(self) -> None:
-        if self.__animationThread and self.__animationThread.is_alive():
-            self.__animationStopEvent.set()
-            self.__animationThread.join()
-            self.__get_property(self.__artSizeSlider, "enabled").write(True)
-            self.__get_property(self.__playAnimBtn, "enabled").write(True)
-            self.__get_property(self.__stopAnimBtn, "enabled").write(False)
+        if self.__animation_thread and self.__animation_thread.is_alive():
+            self.__animation_stop_event.set()
+            self.__animation_thread.join()
+            self.__get_property(
+                self.__art_size_slider, "enabled"
+            ).write(True)
+            self.__get_property(
+                self.__play_anim_button, "enabled"
+            ).write(True)
+            self.__get_property(
+                self.__stop_anim_Button, "enabled"
+            ).write(False)
 
     @Slot(int)
     def __export_art(self, index: int) -> None:
@@ -195,14 +202,13 @@ class Gui(QObject):
         )
         if files and files[0]:
             f = open(files[0], "w+")
-            # noinspection PyTypeChecker
-            f.write(str(self.artFactory[index]))
+            f.write(str(self.art_factory[index]))
             f.close()
 
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:
         self.__get_property(
-            self.__artList, "currentIndex"
+            self.__art_list, "currentIndex"
         ).write(index)
 
     def __init_open_file_dialog(self) -> None:
@@ -217,15 +223,20 @@ class Gui(QObject):
         duration = float(self.__get_property(
             self.__settings, "animationDuration"
         ).read())
-        self.__animationStopEvent = Event()
-        self.__animationThread = Thread(target=self.__animation_thread, args=(
-            len(self.artFactory), duration,
-            self.__animationThreadSignal, self.__animationStopEvent
-        ))
+        self.__animation_stop_event = Event()
+        self.__animation_thread = Thread(
+            target=self.__animation_thread_func,
+            args=(
+                len(self.art_factory), duration,
+                self.__animation_thread_signal, self.__animation_stop_event
+            )
+        )
 
     @staticmethod
-    def __animation_thread(factory_size: int, duration: float,
-                           signal: Signal[int], stop_event: Event) -> None:
+    def __animation_thread_func(factory_size: int,
+                                duration: float,
+                                signal: Signal[int],
+                                stop_event: Event) -> None:
         while True:
             for i in range(factory_size - 1, -1, -1):
                 if stop_event.is_set():
@@ -234,8 +245,8 @@ class Gui(QObject):
                 time.sleep(duration)
 
     @staticmethod
-    def __image_processing_thread(index: int, image: Image,
-                                  signal: Signal[int]) -> None:
+    def __image_thread_func(index: int, image: Image,
+                            signal: Signal[int]) -> None:
         image.convert_to_ascii_art()
         signal.emit(index)
 

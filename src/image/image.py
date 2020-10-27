@@ -41,8 +41,8 @@ class Image:
     __width: int = field(init=False)
     __height: int = field(init=False)
     __color_space: int = field(init=False)
-    __img_source_data: np.ndarray = field(init=False)
-    __img_data: np.ndarray = field(init=False)
+    __image_data_raw: np.ndarray = field(init=False)
+    __image_data: np.ndarray = field(init=False)
     __ascii_data: np.chararray = field(init=False)
     __cached_ascii_data: np.chararray = field(init=False)
 
@@ -53,12 +53,12 @@ class Image:
     def __post_init__(self) -> None:
         if not self.path:
             return
-        self.__img_source_data = np.asarray(imread(self.path))
-        img_info = self.__img_source_data.shape
+        self.__image_data_raw = np.asarray(imread(self.path))
+        img_info = self.__image_data_raw.shape
         if len(img_info) == 3:
             self.__height, self.__width, self.__color_space = img_info
             if self.__color_space > 3:
-                self.__img_source_data = self.__img_source_data[:, :, :3]
+                self.__image_data_raw = self.__image_data_raw[:, :, :3]
                 self.__color_space = 3
         else:
             self.__height, self.__width = img_info
@@ -68,19 +68,19 @@ class Image:
         self.grayscale_level = self.grayscale_level.strip()
         if not self.grayscale_level:
             self.grayscale_level = consts.uiConsts["DefaultGrayscaleLevel"]
-        self.__img_data = self.__img_source_data.copy()
+        self.__image_data = self.__image_data_raw.copy()
         if self.is_negative:
-            self.__img_data = self.__negative(self.__img_data)
+            self.__image_data = self.__negative(self.__image_data)
         if self.is_contrast:
-            self.__img_data = self.__contrast(self.__img_data)
+            self.__image_data = self.__contrast(self.__image_data)
         if self.__color_space > 1:
-            self.__img_data = self.__rgb_to_gray(self.__img_data)
+            self.__image_data = self.__rgb_to_gray(self.__image_data)
         if self.is_convolution:
-            self.__img_data = self.__convolution(self.__img_data)
+            self.__image_data = self.__convolution(self.__image_data)
         if self.is_emboss:
-            self.__img_data = self.__emboss(self.__img_data)
+            self.__image_data = self.__emboss(self.__image_data)
         self.__ascii_data = self.__get_ascii_data(
-            self.__img_data,
+            self.__image_data,
             self.__width, self.__height
         )
         self.__cached_ascii_data = self.__ascii_data.copy()
@@ -100,17 +100,17 @@ class Image:
         return self.__cached_ascii_data
 
     def get_image_data(self) -> np.ndarray:
-        return self.__img_data
+        return self.__image_data
 
     def __get_ascii_data(self, data: np.ndarray,
                          width: int, height: int) -> np.chararray:
-        img_data = (
+        grayscale_indices = (
                 data.reshape((height, width))
                 / 255.0
                 * (len(self.grayscale_level) - 1)
-        ).astype(np.int)
+        ).astype(np.uint8)
         apply_mask_vectorized = np.vectorize(self.__apply_grayscale_mask)
-        return apply_mask_vectorized(img_data, self.grayscale_level)
+        return apply_mask_vectorized(grayscale_indices, self.grayscale_level)
 
     def __compute_art_size(self,
                            win_width: int, win_height: int) -> Tuple[int, int]:

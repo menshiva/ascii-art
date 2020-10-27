@@ -56,7 +56,7 @@ $ cd menshiva
 #### Install dependencies
 Run this command to install all necessary dependencies:
 ```bash
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 
 #### Run application
@@ -139,7 +139,7 @@ $ sudo apt-get install libxcb-xinerama0
 * Convolution and emboss effects:
   - [Kernel image](https://en.wikipedia.org/wiki/Kernel_(image_processing))
   - [Kernel visualisation](https://setosa.io/ev/image-kernels/)
-  - [Discrete Fourier Transform](https://numpy.org/doc/stable/reference/routines.fft.html)
+  - [Discrete Fourier Transform](https://numpy.org/doc/stable/reference/routines.fft.html#background-information)
 
 #### Related
 * Special thanks to [Freepik](https://www.flaticon.com/authors/freepik) for app icon!
