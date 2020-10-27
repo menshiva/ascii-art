@@ -137,9 +137,9 @@ $ sudo apt-get install libxcb-xinerama0
 * [RGB to grayscale preserving luminance algorithm](https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale)
 * [Contrast effect algorithm](https://en.wikipedia.org/wiki/Contrast_(vision))
 * Convolution and emboss effects:
-  -[Kernel image](https://en.wikipedia.org/wiki/Kernel_(image_processing))
-  -[Kernel visualisation](https://setosa.io/ev/image-kernels/)
-  -[Discrete Fourier Transform](https://numpy.org/doc/stable/reference/routines.fft.html)
+  - [Kernel image](https://en.wikipedia.org/wiki/Kernel_(image_processing))
+  - [Kernel visualisation](https://setosa.io/ev/image-kernels/)
+  - [Discrete Fourier Transform](https://numpy.org/doc/stable/reference/routines.fft.html)
 
 #### Related
 * Special thanks to [Freepik](https://www.flaticon.com/authors/freepik) for app icon!
