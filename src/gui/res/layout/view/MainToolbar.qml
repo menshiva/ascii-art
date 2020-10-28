@@ -1,3 +1,4 @@
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.15
@@ -5,7 +6,7 @@ import QtQuick.Controls.Material 2.15
 ToolBar {
     Material.foreground: "white"
     leftPadding: Consts.ToolbarPadding
-    rightPadding: leftPadding
+    rightPadding: Consts.ToolbarPadding
 
     RowLayout {
         anchors.fill: parent
@@ -16,9 +17,13 @@ ToolBar {
         }
         Label {
             Layout.fillWidth: true
-            leftPadding: Consts.ToolbarTitlePadding
-            text: Consts.ToolbarTitle
+            leftPadding: Consts.ToolbarPadding
+            text: Consts.ProjectName
             font.pixelSize: Consts.ToolbarTitleFontSize
+            font.bold: true
+            font.kerning: false
+            font.preferShaping: false
+            textFormat: Text.PlainText
         }
         Slider {
             id: artSizeSlider
@@ -69,10 +74,10 @@ ToolBar {
                 id: settingsMenu
                 y: parent.height
                 topPadding: 0
-                bottomPadding: topPadding
+                bottomPadding: 0
 
                 Action {
-                    text: Consts.SettingsButtonText
+                    text: Consts.SettingsText
                     onTriggered: {
                         Gui.__stop_animation()
                         settingsDialog.open()

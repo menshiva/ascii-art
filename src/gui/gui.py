@@ -83,7 +83,7 @@ class Gui(QObject):
         )
         self.__play_anim_button = self.__root.findChild(QObject, "playAnimBtn")
         self.__stop_anim_Button = self.__root.findChild(QObject, "stopAnimBtn")
-        self.image_dialog = self.__root.findChild(QObject, "image_dialog")
+        self.image_dialog = self.__root.findChild(QObject, "imageDialog")
 
         self.__art_list.currentItemChanged.connect(self.__draw_art)
         self.__init_animation_thread()

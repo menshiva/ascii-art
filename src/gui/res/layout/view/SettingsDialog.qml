@@ -8,7 +8,7 @@ Dialog {
     width: parent.width * Consts.DialogWidthCoefficient
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
-    title: Consts.SettingsButtonText
+    title: Consts.SettingsText
     modal: true
     closePolicy: Popup.NoAutoClose
     Overlay.modal: Rectangle { color: Consts.ShadowColor }
@@ -25,7 +25,6 @@ Dialog {
                 id: themeBox
                 width: parent.width
                 flat: true
-                Material.foreground: parent.Material.foreground
                 model: Consts.SettingsThemeModels
                 currentIndex: settings.theme
             }
@@ -90,7 +89,7 @@ Dialog {
     footer: DialogButtonBox {
         Button {
             flat: true
-            text: Consts.SettingsDialogSaveButtonText
+            text: Consts.ApplyText
             DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
             onClicked: {
                 settings.theme = themeBox.currentIndex
@@ -103,8 +102,8 @@ Dialog {
         }
         Button {
             flat: true
-            text: Consts.DialogCancelButtonText
-            DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+            text: Consts.CancelText
+            DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
             onClicked: {
                 themeBox.currentIndex = settings.theme
                 grayscaleBox.text = settings.grayscale

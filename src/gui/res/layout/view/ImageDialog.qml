@@ -169,8 +169,8 @@ Dialog {
         Button {
             id: cancelImageBtn
             flat: true
-            text: Consts.DialogCancelButtonText
-            DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+            text: Consts.CancelText
+            DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
         }
     }
 

@@ -14,7 +14,7 @@ Item {
     Pane {
         anchors.fill: parent
         anchors.leftMargin: Consts.ArtListItemMargin
-        anchors.rightMargin: anchors.leftMargin
+        anchors.rightMargin: Consts.ArtListItemMargin
         Material.elevation: Consts.ArtListItemElevation
         padding: 0
 

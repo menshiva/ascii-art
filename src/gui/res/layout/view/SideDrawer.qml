@@ -9,8 +9,7 @@ Drawer {
     Overlay.modal: Rectangle { color: Consts.ShadowColor }
 
     ColumnLayout {
-        width: parent.width
-        height: parent.height
+        anchors.fill: parent
         spacing: Consts.ArtListItemMargin
 
         ToolBar {
@@ -18,7 +17,7 @@ Drawer {
             Material.background: parent.Material.background
             Layout.fillWidth: true
             leftPadding: Consts.ToolbarPadding
-            rightPadding: leftPadding
+            rightPadding: Consts.ToolbarPadding
             z: 1
 
             RowLayout {
@@ -26,9 +25,9 @@ Drawer {
 
                 Label {
                     Layout.fillWidth: true
-                    leftPadding: Consts.ToolbarTitlePadding
+                    leftPadding: Consts.ToolbarPadding
                     text: Consts.DrawerTitle
-                    font.pixelSize: Consts.DrawerTitleFontSize
+                    font.pixelSize: Consts.ToolbarTitleFontSize
                     font.bold: true
                 }
                 ToolButton {
