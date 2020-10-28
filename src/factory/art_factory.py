@@ -7,10 +7,17 @@ from src.image import Image
 
 
 class ArtFactory(QAbstractListModel):
-    __NAME_ROLE: Final[int] = Qt.DisplayRole
-    __IMAGE_ROLE: Final[int] = Qt.DecorationRole
-    __arts: List[Image] = []
-    loaded_image: Image = None
+    __NAME_ROLE: Final[int]
+    __IMAGE_ROLE: Final[int]
+    __arts: List[Image]
+    loaded_image: Image or None
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.__NAME_ROLE = Qt.DisplayRole
+        self.__IMAGE_ROLE = Qt.DecorationRole
+        self.__arts = []
+        self.loaded_image = None
 
     def __add__(self, new_image: Image) -> ArtFactory:
         self.beginInsertRows(QModelIndex(), 0, 0)

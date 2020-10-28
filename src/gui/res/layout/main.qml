@@ -38,7 +38,7 @@ ApplicationWindow {
             Layout.fillHeight: true
             Layout.margins: Consts.ArtLayoutMargins
 
-            Label {
+            TextEdit {
                 id: artLayout
                 objectName: "artLayout"
                 anchors.fill: parent
@@ -50,6 +50,10 @@ ApplicationWindow {
                 font.preferShaping: false
                 textFormat: Text.PlainText
                 clip: true
+                readOnly: true
+                selectByMouse: true
+                selectionColor: Material.primary
+                color: Material.foreground
             }
         }
     }
