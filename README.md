@@ -3,7 +3,7 @@
         <img src="img/logo.png" alt="ASCII Art" width="192">
         <br><br>ASCII Art<br>
     </h1>
-    <h4 align="center">A minimal image to ASCII art convertation desktop app.</h4>
+    <h4 align="center">A minimal desktop app for image to ASCII art conversion.</h4>
     <p align="center">
         <a href="#key-features-">Key Features 🍪</a> |
         <a href="#dependencies-">Dependencies 🧬</a> |
@@ -19,7 +19,7 @@
 
 ## Key Features 🍪
 
-* Supporting JPEG, PNG, PPM, PGM image formats
+* Supports JPEG, PNG, PPM, PGM image formats
 * Light / Dark theme
 * ASCII art symbols size adjustment
 * Your own ASCII art symbol style!
@@ -85,10 +85,10 @@ $ python3 app.py
   3) Apply your changes
   4) Press the _Save_ button and wait for image to re-convert
 * To remove image from list:
-  1) Press the three dots under below the needed image
+  1) Press the three dots below the needed image
   2) Press the _Remove image_ button
 * To export image to _.txt_ file:
-  1) Press the three dots under below the needed image
+  1) Press the three dots below the needed image
   2) Press the _Export to text file_ button
   3) Create new text file from opened file browser
 
