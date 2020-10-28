@@ -156,21 +156,19 @@ class Image:
     @staticmethod
     @normalize_uint8
     def __compute_kernel(data: np.ndarray, kernel: np.ndarray) -> np.ndarray:
-        new_h = (data.shape[0] - kernel.shape[0]) // 2
-        new_w = (data.shape[1] - kernel.shape[1]) // 2
-        kernel = np.pad(kernel, (
-            (new_h, new_h + int(data.shape[0] % 2 == 0)),
-            (new_w, new_w + int(data.shape[1] % 2 == 0))
-        ))
-
-        data_transformed = fft.fft2(data)
-        kernel_flipped_transormed = fft.fft2(np.flipud(np.fliplr(kernel)))
-        h, w = data_transformed.shape
-        kernelized = np.real(
-            fft.ifft2(data_transformed * kernel_flipped_transormed)
+        new_kernel_size = (
+            data.shape[0] - kernel.shape[0],
+            data.shape[1] - kernel.shape[1]
         )
-        kernelized = np.roll(kernelized, -h // 2 + 1, axis=0)
-        kernelized = np.roll(kernelized, -w // 2 + 1, axis=1)
+        kernel_padding = (
+            ((new_kernel_size[0] + 1) // 2, new_kernel_size[0] // 2),
+            ((new_kernel_size[1] + 1) // 2, new_kernel_size[1] // 2)
+        )
+        padded_kernel = np.pad(kernel, kernel_padding)
+        # move FFT origin to the middle
+        shifted_kernel = fft.ifftshift(padded_kernel)
+
+        kernelized = np.real(fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel)))
         return kernelized
 
     @staticmethod

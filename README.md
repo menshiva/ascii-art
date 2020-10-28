@@ -139,6 +139,7 @@ $ sudo apt-get install libxcb-xinerama0
 * Convolution and emboss effects:
   - [Kernel image](https://en.wikipedia.org/wiki/Kernel_(image_processing))
   - [Kernel visualisation](https://setosa.io/ev/image-kernels/)
+  - [Relation between image kernel and Fourier transform](https://en.wikipedia.org/wiki/Convolution_theorem)
   - [Discrete Fourier Transform](https://numpy.org/doc/stable/reference/routines.fft.html#background-information)
 
 #### Related
