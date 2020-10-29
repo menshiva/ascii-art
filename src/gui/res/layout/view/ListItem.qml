@@ -65,7 +65,7 @@ Item {
                         text: Consts.ArtListItemPropertiesBtn
                         onTriggered: {
                             Gui.__stop_animation()
-                            Gui.__open_art_dialog(index)
+                            Gui.__open_image_dialog(index)
                         }
                     }
                     Action {

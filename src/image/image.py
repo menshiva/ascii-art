@@ -243,7 +243,7 @@ class Image:
                 Height of window, in which art will be drawn.
 
         Returns:
-            ASCII art's width and height.
+            Pair of ASCII art's width and height.
         """
 
         ascii_h: int

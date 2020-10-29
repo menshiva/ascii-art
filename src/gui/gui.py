@@ -3,7 +3,7 @@ import os
 import sys
 import time
 from threading import Thread, Event
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Optional
 from pathlib import Path
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
@@ -19,9 +19,68 @@ from . import res
 
 
 class Gui(QObject):
+    """
+    Graphical user interface.
+
+    This class provides user interface logic.
+    It stores and controls all views and windows.
+    Manages connection between main program logic and user interface interaction.
+    Uses .qml file in gui/res for UI visualisation.
+
+    Attributes:
+        art_factory: ArtFactory
+            Loaded images.
+        __image_thread_signal: Signal[int]
+            Qt signal. Activates on image processed in background thread.
+        __animation_thread_signal: Signal[int]
+            Qt signal. Activates on animation background thread changes current image.
+        __animation_thread: Thread
+            Animation background thread.
+        __animation_stop_event: Event
+            Stop animation background thread event.
+
+        __app: QApplication
+            Holds Qt application instance for GUI.
+        __engine: QQmlApplicationEngine
+            Holds Qt GUI properties and user interaction logic with __app.
+        __open_file_dialog: QFileDialog
+            File browser for choosing path to new image to add.
+        __root: QObject
+            Root container of main window.
+        __settings: QObject
+            Stores GUI data (such as theme, window size etc.) for the next app launch.
+        __art_layout: QObject
+            Prints ASCII art.
+        __art_list: QObject
+            List view with all loaded images.
+        __art_size_slider: QObject
+            Slider that controls ASCII art symbol size.
+        __play_anim_button: QObject
+            Button for playing animation (starting animation thread).
+        __stop_anim_Button: QObject
+            Button for stopping animation (kills animation thread).
+        image_dialog: QObject
+            Image popup dialog for adding a new image.
+
+        on_open_image_dialog: Callable[[Gui, int], None]
+            image_dialog opened callback function.
+        on_preview_art: Callable[[Gui, Image], None]
+            Update an image that currently adding (but not added yet) callback function.
+        on_image_processed: Callable[[Gui, int], None]
+            Image converted to ASCII art callback function.
+        on_add_edit_art: Callable[[Gui, int, str], None]
+            Image add / edit callback function.
+        on_draw_art: Callable[[Gui, int], None]
+            Draw ASCII art callback function.
+        on_remove_art: Callable[[Gui, int], None]
+            Remove image callback function.
+        on_apply_grayscale: Callable[[Gui, str], None]
+            Update grayscale for all images callback function.
+    """
+
     art_factory: ArtFactory
-    __image_thread_signal: Signal = Signal(int)
-    __animation_thread_signal: Signal = Signal(int)
+    __image_thread_signal: Signal[int] = Signal(int)
+    __animation_thread_signal: Signal[int] = Signal(int)
     __animation_thread: Thread
     __animation_stop_event: Event
 
@@ -37,7 +96,7 @@ class Gui(QObject):
     __stop_anim_Button: QObject
     image_dialog: QObject
 
-    on_open_art_dialog: Callable[[Gui, int], None]
+    on_open_image_dialog: Callable[[Gui, int], None]
     on_preview_art: Callable[[Gui, Image], None]
     on_image_processed: Callable[[Gui, int], None]
     on_add_edit_art: Callable[[Gui, int, str], None]
@@ -46,6 +105,8 @@ class Gui(QObject):
     on_apply_grayscale: Callable[[Gui, str], None]
 
     def __init__(self, art_factory: ArtFactory) -> None:
+        """Gui initialization."""
+
         super().__init__()
         self.art_factory = art_factory
         # noinspection PyUnresolvedReferences
@@ -53,6 +114,7 @@ class Gui(QObject):
         # noinspection PyUnresolvedReferences
         self.__animation_thread_signal.connect(self.__art_list_change_index)
 
+        # Material desktop style
         os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
         QApplication.setAttribute(Qt.AA_PluginApplication)
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -90,17 +152,40 @@ class Gui(QObject):
         self.__init_open_file_dialog()
 
     def __del__(self) -> None:
+        """Gui destructor."""
+
         Path(os.path.join(sys.path[0], "tmp.ppm")).unlink(True)
         self.__stop_animation()
         self.__art_list.currentItemChanged.disconnect(self.__draw_art)
         self.__app.quit()
 
     def process_image_background(self, index: int, image: Image) -> None:
+        """
+        Creates new background thread for image to ASCII art converting.
+
+        Args:
+            index: int
+                Index of image to convert.
+                If image is not added, index should be set to -1.
+            image: Image
+                Image to convert.
+
+        Returns:
+            None.
+        """
+
         Thread(target=self.__image_thread_func, args=(
             index, image, self.__image_thread_signal
         )).start()
 
     def compute_art_layout_size(self) -> Tuple[int, int]:
+        """
+        Computes the size of art_layout which prints ASCII art.
+
+        Returns:
+            Pair of art_layout's width and height.
+        """
+
         art_width = int(self.__get_property(
             self.__art_layout, "width"
         ).read())
@@ -115,26 +200,95 @@ class Gui(QObject):
         return char_width, char_height
 
     def print_art(self, art: str) -> None:
+        """
+        Prints ASCII art in art_layout.
+
+        Args:
+            art: str
+                ASCII art.
+
+        Returns:
+            None.
+        """
+
         self.__get_property(self.__art_layout, "text").write(art)
 
-    def set_play_animation_button_enable(self, enable: bool) -> None:
-        self.__get_property(self.__play_anim_button, "enabled").write(enable)
+    def set_play_animation_button_enable(self, state: bool) -> None:
+        """
+        Toggles play_anim_button.
+
+        Args:
+            state: bool
+                Enable / disable button.
+
+        Returns:
+            None.
+        """
+
+        self.__get_property(self.__play_anim_button, "enabled").write(state)
 
     def get_current_art_list_index(self) -> int:
+        """
+        Returns:
+            Index from art_list of currently drawed ASCII art.
+        """
+
         return int(self.__get_property(self.__art_list, "currentIndex").read())
 
     def show(self) -> None:
+        """
+        Shows Gui.
+
+        Returns:
+            None.
+        """
+
         sys.exit(self.__app.exec_())
 
     @Slot(int)
-    def __open_art_dialog(self, index: int) -> None:
-        self.on_open_art_dialog(self, index)
+    def __open_image_dialog(self, index: int) -> None:
+        """
+        Qt slot for opening an image_dialog.
+
+        Args:
+            index: int
+                Index of opened image.
+                If image is not added, index should be set to -1.
+
+        Returns:
+            None.
+        """
+
+        self.on_open_image_dialog(self, index)
 
     @Slot(str, str, bool, bool, bool, bool, str)
     def __preview_art(self, name: str, path: str,
                       contrast: bool, negative: bool,
                       convolution: bool, emboss: bool,
                       grayscale: str) -> None:
+        """
+        Qt slot for image previewing.
+
+        Args:
+            name: str
+                Image's name.
+            path: str
+                Path to image file.
+            contrast: bool
+                Image's contrast flag.
+            negative: bool
+                Image's negative flag.
+            convolution: bool
+                Image's convolution flag.
+            emboss: bool
+                Image's emboss flag.
+            grayscale: str
+                Image's grayscale level.
+
+        Returns:
+            None.
+        """
+
         self.on_preview_art(self, Image(
             name, path,
             contrast, negative,
@@ -144,27 +298,89 @@ class Gui(QObject):
 
     @Slot(int)
     def __on_image_processed(self, index: int) -> None:
+        """
+        Qt slot for image converted to ASCII art in background thread.
+
+        Args:
+            index: int
+                Index of converted image.
+                If image is not added, index should be set to -1.
+
+        Returns:
+            None.
+        """
+
         self.on_image_processed(self, index)
 
     @Slot(int, str)
     def __add_edit_art(self, index: int, name: str) -> None:
+        """
+        Qt slot for adding / editing converted image.
+
+        Args:
+            index: int
+                Index of converted image.
+                If image is not added, index should be set to -1.
+            name: str
+                Name of converted image.
+
+        Returns:
+            None.
+        """
+
         self.on_add_edit_art(self, index, name)
 
     @Slot()
     def __draw_art(self) -> None:
+        """
+        Qt slot for drawing art.
+
+        Returns:
+            None.
+        """
+
         self.on_draw_art(self, self.get_current_art_list_index())
 
     @Slot(int)
     def __remove_art(self, index: int) -> None:
+        """
+        Qt slot for removing image from list.
+
+        Args:
+            index: int
+                Image's index in list.
+
+        Returns:
+            None.
+        """
+
         self.on_remove_art(self, index)
 
     @Slot(str)
     def __apply_grayscale(self, new_grayscale: str) -> None:
+        """
+        Qt slot for applying a new grascale level.
+
+        Args:
+            new_grayscale: str
+                New grayscale level.
+                Should be empty str for default grayscale level.
+
+        Returns:
+            None.
+        """
+
         self.on_apply_grayscale(self, new_grayscale)
 
-    # noinspection PyTypeChecker
-    @Slot(result=str)
+    @Slot(result=Optional[str])
     def __browse_files(self) -> str:
+        """
+        Qt slot for opening file dialog to choose path to image file.
+
+        Returns:
+            Path to image file or empty str instead.
+        """
+
         if self.__open_file_dialog.exec_():
             selected_files = self.__open_file_dialog.selectedFiles()
             if selected_files:
@@ -173,6 +389,13 @@ class Gui(QObject):
 
     @Slot()
     def __start_animation(self) -> None:
+        """
+        Qt slot for starting animation.
+
+        Returns:
+            None.
+        """
+
         self.__get_property(self.__art_size_slider, "enabled").write(False)
         self.__get_property(self.__play_anim_button, "enabled").write(False)
         self.__get_property(self.__stop_anim_Button, "enabled").write(True)
@@ -181,6 +404,13 @@ class Gui(QObject):
 
     @Slot()
     def __stop_animation(self) -> None:
+        """
+        Qt slot for stopping animation.
+
+        Returns:
+            None.
+        """
+
         if self.__animation_thread and self.__animation_thread.is_alive():
             self.__animation_stop_event.set()
             self.__animation_thread.join()
@@ -196,6 +426,18 @@ class Gui(QObject):
 
     @Slot(int)
     def __export_art(self, index: int) -> None:
+        """
+        Qt slot for opening file dialog to choose path to text file
+        to export ASCII art into.
+
+        Args:
+            index: int
+                Image's index in list.
+
+        Returns:
+            None.
+        """
+
         files = QFileDialog.getSaveFileName(
             caption="Save art",
             filter="Text files (*.txt)"
@@ -207,11 +449,25 @@ class Gui(QObject):
 
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:
+        """
+        Qt slot for changing currently drawed ASCII art.
+
+        Args:
+            index: int
+                Image's index in list.
+                Should be -1 for clearing art_layout.
+
+        Returns:
+            None.
+        """
+
         self.__get_property(
             self.__art_list, "currentIndex"
         ).write(index)
 
     def __init_open_file_dialog(self) -> None:
+        """open_file_dialog initialization."""
+
         self.__open_file_dialog = QFileDialog()
         self.__open_file_dialog.setWindowTitle("Open image")
         self.__open_file_dialog.setFileMode(QFileDialog.ExistingFile)
@@ -220,6 +476,8 @@ class Gui(QObject):
         )
 
     def __init_animation_thread(self) -> None:
+        """animation_thread initialization."""
+
         duration = float(self.__get_property(
             self.__settings, "animationDuration"
         ).read())
@@ -237,6 +495,26 @@ class Gui(QObject):
                                 duration: float,
                                 signal: Signal[int],
                                 stop_event: Event) -> None:
+        """
+        Function used in animation background thread.
+
+        Sends each index of loaded images to signal
+        with duration delay.
+
+        Args:
+            factory_size: int
+                Loaded images count.
+            duration: float
+                Delay between animation frames (in seconds).
+            signal: Signal[int]
+                Qt signal accepting image index which need to be drawn.
+            stop_event: Event
+                Event for thread killing.
+
+        Returns:
+            None.
+        """
+
         while True:
             for i in range(factory_size - 1, -1, -1):
                 if stop_event.is_set():
@@ -247,9 +525,41 @@ class Gui(QObject):
     @staticmethod
     def __image_thread_func(index: int, image: Image,
                             signal: Signal[int]) -> None:
+        """
+        Function used in image converting background thread.
+
+        Sends index of converted image to signal.
+        Note that index is -1 if image wasn't already added.
+
+        Args:
+            index: int
+                Image's index in list.
+                If image is not added, index should be set to -1.
+            image: Image
+                Image to convert.
+            signal: Signal[int]
+                Qt signal accepting image index which was convert.
+
+        Returns:
+            None.
+        """
+
         image.convert_to_ascii_art()
         signal.emit(index)
 
     @staticmethod
     def __get_property(element: QObject, prop: str) -> QQmlProperty:
+        """
+        Helper function for getting a Qt object's property.
+
+        Args:
+            element: QObject
+                Qt object.
+            prop: str
+                Property name.
+
+        Returns:
+            Mutable Qt object's property.
+        """
+
         return QQmlProperty(element, prop)

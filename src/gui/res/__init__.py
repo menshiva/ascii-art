@@ -7,6 +7,13 @@ from PySide2.QtCore import QSize
 
 
 def get_app_icon() -> QIcon:
+    """
+    Reads icon files of different sizes and convert them to QIcon.
+
+    Returns:
+        QIcon.
+    """
+
     app_icon = QIcon()
     icon_paths = Path(
         os.path.join(sys.path[0], "src/gui/res/app_icon")
@@ -17,4 +24,6 @@ def get_app_icon() -> QIcon:
 
 
 def get_main_qml_path() -> str:
+    """Returns path to main GUI file."""
+
     return os.path.join(sys.path[0], "src/gui/res/layout/main.qml")

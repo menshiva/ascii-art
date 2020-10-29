@@ -14,10 +14,10 @@ def save_preview_tmp(preview: Image) -> str:
     return tmp_path
 
 
-def on_open_art_dialog(gui: Gui, index: int) -> None:
-    if index == -1:
+def on_open_image_dialog(gui: Gui, index: int) -> None:
+    if index == -1:  # adding new image
         gui.image_dialog.openDialog(-1, "", "", "", False, False, False, False)
-    else:
+    else:  # editing existing image
         image = gui.art_factory[index]
         preview_path = save_preview_tmp(image)
         gui.image_dialog.openDialog(
@@ -35,7 +35,7 @@ def on_preview_art(gui: Gui, image: Image) -> None:
 
 
 def on_image_processed(gui: Gui, index: int) -> None:
-    if index == -1:
+    if index == -1:  # new image preview
         preview_path = save_preview_tmp(gui.art_factory.loaded_image)
         gui.image_dialog.setPreview(preview_path)
         gui.image_dialog.setImageLoading(False)
@@ -47,11 +47,11 @@ def on_add_edit_art(gui: Gui, index: int, name: str) -> None:
     new_image = gui.art_factory.loaded_image
     new_image.name = name
     gui.art_factory.loaded_image = None
-    if index == -1:
+    if index == -1:  # add image
         gui.art_factory += new_image
         if len(gui.art_factory) > 1:
             gui.set_play_animation_button_enable(True)
-    else:
+    else:  # edit image
         gui.art_factory[index] = new_image
         if gui.get_current_art_list_index() == index:
             on_draw_art(gui, index)
@@ -82,7 +82,7 @@ def on_apply_grayscale(gui: Gui, new_grayscale: str) -> None:
 def main():
     art_factory = ArtFactory()
     gui = Gui(art_factory)
-    gui.on_open_art_dialog = on_open_art_dialog
+    gui.on_open_image_dialog = on_open_image_dialog
     gui.on_preview_art = on_preview_art
     gui.on_image_processed = on_image_processed
     gui.on_add_edit_art = on_add_edit_art

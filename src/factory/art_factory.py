@@ -12,14 +12,14 @@ class ArtFactory(QAbstractListModel):
 
     This is a general factory class for images.
     Stores all loaded images and can control (add, update, remove, count etc.) them.
-    Manages connection between main program logic, loaded image files and GUI.
+    Manages connection between main program logic, loaded images and GUI.
     Inherits QAbstractListModel class for connection with GUI.
 
     Attributes:
         __NAME_ROLE: Final[int]
-            Private constant for defining image's name attribute for Gui.
+            Private constant for defining image's name attribute for GUI.
         __IMAGE_ROLE: Final[int]
-            Private constant for defining image's path attribute for Gui.
+            Private constant for defining image's path attribute for GUI.
         __arts: List[Image]
             All loaded images.
         loaded_image: Image or None

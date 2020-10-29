@@ -1,4 +1,4 @@
-uiConsts = {
+uiConsts = {  # Consts used in user interface.
     "ApplicationMinWidth": 800,
     "ApplicationMinHeight": 600,
     "ToolbarPadding": 8,
@@ -72,7 +72,7 @@ uiConsts = {
     "SliderColor": "#00675b"
 }
 
-imageConsts = {
+imageConsts = {  # Consts used in image algorithms.
     "EmbossKernel": [
         [-2, -1, 0],
         [-1, 1, 1],
