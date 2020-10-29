@@ -17,13 +17,13 @@ class ArtFactory(QAbstractListModel):
 
     Attributes:
         __NAME_ROLE: Final[int]
-            Private constant for defining image's name property for Gui.
+            Private constant for defining image's name attribute for Gui.
         __IMAGE_ROLE: Final[int]
-            Private constant for defining image's path property for Gui.
+            Private constant for defining image's path attribute for Gui.
         __arts: List[Image]
-            Private list that holds all loaded images.
+            All loaded images.
         loaded_image: Image or None
-            Temporary holder for currently adding (but not added yet) image.
+            Currently adding (but not added yet) image.
     """
 
     __NAME_ROLE: Final[int]
@@ -63,7 +63,7 @@ class ArtFactory(QAbstractListModel):
 
         Args:
             index: int
-                Image position.
+                Image index.
             image: Image
                 Updated image.
 
@@ -178,7 +178,7 @@ class ArtFactory(QAbstractListModel):
         Redefined method from QAbstractListModel.
 
         Returns:
-            A dict mapping roles to the corresponding image properties.
+            A dict mapping image attributes to the corresponding roles.
         """
 
         return {
