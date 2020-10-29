@@ -165,8 +165,7 @@ class Image:
             ((new_kernel_size[1] + 1) // 2, new_kernel_size[1] // 2)
         )
         padded_kernel = np.pad(kernel, kernel_padding)
-        # move FFT origin to the middle
-        shifted_kernel = fft.ifftshift(padded_kernel)
+        shifted_kernel = fft.ifftshift(padded_kernel)  # move FFT origin to the middle
 
         kernelized = np.real(fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel)))
         return kernelized
