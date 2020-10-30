@@ -139,8 +139,8 @@ Dialog {
                         onClicked: previewImage()
                     }
                     CheckBox {
-                        id: convolutionEffect
-                        text: Consts.AddImgConvolutionEffectText
+                        id: sharpenEffect
+                        text: Consts.AddImgSharpenEffectText
                         onClicked: previewImage()
                     }
                     CheckBox {
@@ -179,7 +179,7 @@ Dialog {
         browseImgBtn.enabled = !isLoading
         contrastEffect.enabled = !isLoading
         negativeEffect.enabled = !isLoading
-        convolutionEffect.enabled = !isLoading
+        sharpenEffect.enabled = !isLoading
         embossEffect.enabled = !isLoading
         addImageBtn.enabled = !isLoading
                               && addImageDialogNameBox.text != ""
@@ -200,13 +200,13 @@ Dialog {
             addImageDialogPathBox.text,
             contrastEffect.checked,
             negativeEffect.checked,
-            convolutionEffect.checked,
+            sharpenEffect.checked,
             embossEffect.checked,
             settings.grayscale
         )
     }
 
-    function openDialog(index, preview, name, path, contrast, negative, convolution, emboss) {
+    function openDialog(index, preview, name, path, contrast, negative, sharpen, emboss) {
         itemIndex = index
         setPreview(preview)
         browseImgBtn.enabled = itemIndex == -1
@@ -214,7 +214,7 @@ Dialog {
         addImageDialogPathBox.text = path
         contrastEffect.checked = contrast
         negativeEffect.checked = negative
-        convolutionEffect.checked = convolution
+        sharpenEffect.checked = sharpen
         embossEffect.checked = emboss
         addImageBtn.text = itemIndex == -1 ? Consts.AddImageDialogAddBtn : Consts.AddImageDialogSaveBtn
         open()

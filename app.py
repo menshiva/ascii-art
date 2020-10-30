@@ -24,7 +24,7 @@ def on_open_image_dialog(gui: Gui, index: int) -> None:
             index, preview_path,
             image.name, image.path,
             image.is_contrast, image.is_negative,
-            image.is_convolution, image.is_emboss
+            image.is_sharpen, image.is_emboss
         )
 
 

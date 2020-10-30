@@ -33,7 +33,7 @@ uiConsts = {  # Consts used in user interface.
     "AddImgEffectsText": "Image effects",
     "AddImgContrastEffectText": "Contrast",
     "AddImgNegativeEffectText": "Negative",
-    "AddImgConvolutionEffectText": "Convolution",
+    "AddImgSharpenEffectText": "Sharpen",
     "AddImgEmbossEffectText": "Emboss",
     "ArtListItemPropertiesBtn": "Properties",
     "ArtListItemSaveTxtBtn": "Export to text file",
@@ -78,7 +78,7 @@ imageConsts = {  # Consts used in image algorithms.
         [-1, 1, 1],
         [0, 1, 2]
     ],
-    "ConvolutionKernel": [
+    "SharpenKernel": [
         [0, -1, 0],
         [-1, 5, -1],
         [0, -1, 0]

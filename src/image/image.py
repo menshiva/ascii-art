@@ -62,7 +62,8 @@ class Image:
     Data class for all supported image formats.
 
     This class holds all data, needed for raw format without any compression.
-    Operates with image in common way, such as: read from path, convert to ASCII, add effect etc.
+    Operates with image in common way, such as:
+    read from path, convert to ASCII, add effect etc.
 
     Attributes:
         name: str
@@ -73,12 +74,13 @@ class Image:
             Flag, which indicates if contrast effect is applied.
         is_negative: bool
             Flag, which indicates if negative effect is applied.
-        is_convolution: bool
-            Flag, which indicates if convolution effect is applied.
+        is_sharpen: bool
+            Flag, which indicates if sharpen effect is applied.
         is_emboss: bool
             Flag, which indicates if emboss effect is applied.
         grayscale_level: str
-            Range of symbols from darkest to lightest, whiches used for ASCII convertation.
+            Range of symbols from darkest to lightest,
+            whiches used for ASCII convertation.
         __width: int
             Width of image (in pixels count).
         __height: int
@@ -88,7 +90,8 @@ class Image:
         __image_data_raw: np.ndarray
             List of color components values, which were read from image file.
         __image_data: np.ndarray
-            Copy of __image_data_raw, which has effects applied and converted to grayscale.
+            Copy of __image_data_raw, which has effects
+            applied and converted to grayscale.
         __ascii_data: np.chararray
             Copy of __image_data converted to ASCII art.
         __cached_ascii_data: np.chararray
@@ -99,7 +102,7 @@ class Image:
     path: str
     is_contrast: bool
     is_negative: bool
-    is_convolution: bool
+    is_sharpen: bool
     is_emboss: bool
     grayscale_level: str
     __width: int = field(init=False)
@@ -166,8 +169,8 @@ class Image:
             self.__image_data = self.__contrast(self.__image_data)
         if self.__color_space > 1:
             self.__image_data = self.__rgb_to_gray(self.__image_data)
-        if self.is_convolution:
-            self.__image_data = self.__convolution(self.__image_data)
+        if self.is_sharpen:
+            self.__image_data = self.__sharpen(self.__image_data)
         if self.is_emboss:
             self.__image_data = self.__emboss(self.__image_data)
         self.__ascii_data = self.__get_ascii_data()
@@ -214,7 +217,8 @@ class Image:
         """
         Converts image data to ASCII art.
 
-        Finds needful ASCII character in grayscale level by brightness level of image data's values.
+        Finds needful ASCII character in grayscale level
+        by brightness level of image data's values.
         Uses NumPy vectorization (performance improvement).
 
         Returns:
@@ -229,7 +233,9 @@ class Image:
         apply_mask_vectorized = np.vectorize(self.__apply_grayscale_mask)
         return apply_mask_vectorized(grayscale_indices, self.grayscale_level)
 
-    def __compute_art_size(self, win_width: int, win_height: int) -> Tuple[int, int]:
+    def __compute_art_size(self,
+                           win_width: int,
+                           win_height: int) -> Tuple[int, int]:
         """
         Computes new width and height for ASCII art to fit in,
         based on width and height of window and image.
@@ -299,20 +305,20 @@ class Image:
         non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
         return non_trunc_contrasted
 
-    def __convolution(self, data: np.ndarray) -> np.ndarray:
+    def __sharpen(self, data: np.ndarray) -> np.ndarray:
         """
-        Applies convolution effect.
+        Applies sharpen effect.
 
         Args:
             data: np.ndarray
                 Image data.
 
         Returns:
-            Image data with convolution effect.
+            Image data with sharpen effect.
         """
 
-        convolution_kernel = np.array(consts.imageConsts["ConvolutionKernel"])
-        return self.__compute_kernel(data, convolution_kernel)
+        sharpen_kernel = np.array(consts.imageConsts["SharpenKernel"])
+        return self.__compute_kernel(data, sharpen_kernel)
 
     def __emboss(self, data: np.ndarray) -> np.ndarray:
         """
@@ -333,10 +339,10 @@ class Image:
     @normalize_uint8
     def __compute_kernel(data: np.ndarray, kernel: np.ndarray) -> np.ndarray:
         """
-        Helper function for computing image's kernel.
+        Helper function for computing sharpen (image kernel).
 
-        Computes image's kernel using discrete Fourier Transform
-        and applies kernel-based (convolution, emboss etc.) effects.
+        Computes image kernel using discrete Fourier Transform
+        and applies sharpen kernel-based (sharpen, emboss etc.) effects.
 
         Args:
             data: np.ndarray
@@ -357,9 +363,12 @@ class Image:
             ((new_kernel_size[1] + 1) // 2, new_kernel_size[1] // 2)
         )
         padded_kernel = np.pad(kernel, kernel_padding)
-        shifted_kernel = fft.ifftshift(padded_kernel)  # move FFT origin to the middle
+        # move FFT origin to the middle
+        shifted_kernel = fft.ifftshift(padded_kernel)
 
-        kernelized = np.real(fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel)))
+        kernelized = np.real(
+            fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel))
+        )
         return kernelized
 
     @staticmethod
@@ -393,7 +402,8 @@ class Image:
     @staticmethod
     def __apply_grayscale_mask(index: int, grayscale_level: str) -> str:
         """
-        Helper function for mapping grayscale level symbol to brightness of image data.
+        Helper function for mapping grayscale level symbol
+        to image data values' brightness.
 
         Should be used with NumPy vectorization (performance improvement).
 

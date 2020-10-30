@@ -11,7 +11,8 @@ class ArtFactory(QAbstractListModel):
     Image controller.
 
     This is a general factory class for images.
-    Stores all loaded images and can control (add, update, remove, count etc.) them.
+    Stores all loaded images and can control
+    (add, update, remove, count etc.) them.
     Manages connection between main program logic, loaded images and GUI.
     Inherits QAbstractListModel class for connection with GUI.
 
@@ -150,7 +151,7 @@ class ArtFactory(QAbstractListModel):
                 List item's role.
 
         Returns:
-            Data stored under the given role for the item referred to by the index.
+            Data stored under the role for the item by the index.
         """
 
         row = index.row()

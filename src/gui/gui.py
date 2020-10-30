@@ -3,7 +3,7 @@ import os
 import sys
 import time
 from threading import Thread, Event
-from typing import Callable, Tuple, Optional
+from typing import Callable, Tuple
 from pathlib import Path
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
@@ -24,16 +24,19 @@ class Gui(QObject):
 
     This class provides user interface logic.
     It stores and controls all views and windows.
-    Manages connection between main program logic and user interface interaction.
+    Manages connection between main program logic
+    and user interface interaction.
     Uses .qml file in gui/res for UI visualisation.
 
     Attributes:
         art_factory: ArtFactory
             Loaded images.
         __image_thread_signal: Signal[int]
-            Qt signal. Activates on image processed in background thread.
+            Qt signal.
+            Activates on image processed in background thread.
         __animation_thread_signal: Signal[int]
-            Qt signal. Activates on animation background thread changes current image.
+            Qt signal.
+            Activates on animation background thread changes current image.
         __animation_thread: Thread
             Animation background thread.
         __animation_stop_event: Event
@@ -48,7 +51,8 @@ class Gui(QObject):
         __root: QObject
             Root container of main window.
         __settings: QObject
-            Stores GUI data (such as theme, window size etc.) for the next app launch.
+            Stores GUI data (such as theme, window size etc.)
+            for the next app launch.
         __art_layout: QObject
             Prints ASCII art.
         __art_list: QObject
@@ -65,7 +69,8 @@ class Gui(QObject):
         on_open_image_dialog: Callable[[Gui, int], None]
             image_dialog opened callback function.
         on_preview_art: Callable[[Gui, Image], None]
-            Update an image that currently adding (but not added yet) callback function.
+            Update an image that currently adding (but not added yet)
+            callback function.
         on_image_processed: Callable[[Gui, int], None]
             Image converted to ASCII art callback function.
         on_add_edit_art: Callable[[Gui, int, str], None]
@@ -264,7 +269,7 @@ class Gui(QObject):
     @Slot(str, str, bool, bool, bool, bool, str)
     def __preview_art(self, name: str, path: str,
                       contrast: bool, negative: bool,
-                      convolution: bool, emboss: bool,
+                      sharpen: bool, emboss: bool,
                       grayscale: str) -> None:
         """
         Qt slot for image previewing.
@@ -278,8 +283,8 @@ class Gui(QObject):
                 Image's contrast flag.
             negative: bool
                 Image's negative flag.
-            convolution: bool
-                Image's convolution flag.
+            sharpen: bool
+                Image's sharpen flag.
             emboss: bool
                 Image's emboss flag.
             grayscale: str
@@ -292,7 +297,7 @@ class Gui(QObject):
         self.on_preview_art(self, Image(
             name, path,
             contrast, negative,
-            convolution, emboss,
+            sharpen, emboss,
             grayscale
         ))
 
@@ -372,7 +377,8 @@ class Gui(QObject):
 
         self.on_apply_grayscale(self, new_grayscale)
 
-    @Slot(result=Optional[str])
+    # noinspection PyTypeChecker
+    @Slot(result=str)
     def __browse_files(self) -> str:
         """
         Qt slot for opening file dialog to choose path to image file.
