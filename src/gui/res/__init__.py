@@ -11,14 +11,12 @@ def get_app_icon() -> QIcon:
     Reads icon files of different sizes and convert them to QIcon.
 
     Returns:
-        QIcon.
+        App icon.
     """
 
     app_icon = QIcon()
-    icon_paths = Path(
-        os.path.join(sys.path[0], "src/gui/res/app_icon")
-    ).glob("*")
-    for icon in icon_paths:
+    icon_paths = Path(os.path.join(sys.path[0], "src/gui/res/app_icon"))
+    for icon in icon_paths.iterdir():
         app_icon.addFile(str(icon), QSize(int(icon.stem), int(icon.stem)))
     return app_icon
 

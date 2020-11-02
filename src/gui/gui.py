@@ -449,9 +449,8 @@ class Gui(QObject):
             filter="Text files (*.txt)"
         )
         if files and files[0]:
-            f = open(files[0], "w+")
-            f.write(str(self.art_factory[index]))
-            f.close()
+            with open(files[0], "wt") as f:
+                f.write(str(self.art_factory[index]))
 
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:

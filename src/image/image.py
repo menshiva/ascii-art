@@ -1,4 +1,5 @@
 from __future__ import annotations
+from functools import wraps
 from dataclasses import dataclass, field
 from typing import Tuple, Callable, Any
 
@@ -9,7 +10,7 @@ from imageio import imread
 from src.util import consts
 
 
-def normalize_uint8(func: Callable[[Any], np.ndarray]) -> np.ndarray:
+def normalize_uint8(func: Callable[[Any], np.ndarray]):
     """
     Decorator for image data normalization.
 
@@ -24,17 +25,17 @@ def normalize_uint8(func: Callable[[Any], np.ndarray]) -> np.ndarray:
         Truncated NumPy array.
     """
 
+    @wraps(func)
     def wrapper(*args) -> np.ndarray:
         data = func(*args)
         data[data < 0] = 0
         data[data > 255] = 255
         return data.astype(np.uint8)
 
-    # noinspection PyTypeChecker
     return wrapper
 
 
-def format_output_ascii(func: Callable[[Any], np.chararray]) -> str:
+def format_output_ascii(func: Callable[[Any], np.chararray]):
     """
     Decorator for formatting ASCII art output.
 
@@ -48,11 +49,11 @@ def format_output_ascii(func: Callable[[Any], np.chararray]) -> str:
         Formatted string.
     """
 
+    @wraps(func)
     def wrapper(*args) -> str:
         data = func(*args)
         return '\n'.join(''.join('%c' % symb for symb in row) for row in data)
 
-    # noinspection PyTypeChecker
     return wrapper
 
 
