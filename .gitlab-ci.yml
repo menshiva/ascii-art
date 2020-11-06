@@ -62,9 +62,39 @@ test-homework02:
   script:
     - cd homework02
     - "gitlab-runner-secrets verify-file-signatures test_*.py"
-    - pytest -c /etc/config/pytest.ini 
+    - sudo -u nobody pytest -c /etc/config/pytest.ini test_space_motion.py
   only:
     - homework02
+
+test-homework02-private:
+  stage: test-private
+  tags:
+    - bi-pyt-assignment-private
+  script:
+    - sudo -u nobody pytest -c /etc/config/pytest.ini -v --tb=no --no-summary -rN test_space_motion_private.py
+    - sleep 10
+  only:
+    - homework02
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - homework02/.test_log.en1
+
+validate-homework02:
+  stage: validate
+  variables:
+    ASSIGNMENT_DEADLINE: "2020-11-15T23:59:59"
+  tags:
+    - bi-pyt-assignment-validate
+  script:
+    - cat classification_log.txt
+    - stat before_deadline >/dev/null 2>&1
+  only:
+    - homework02
+  dependencies:
+    - test-homework02-private
+  coverage: '/PASSED_PERCENT=\d+.\d+\%/'
     
 test-homework03:
   stage: test
