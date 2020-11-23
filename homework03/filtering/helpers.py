@@ -40,6 +40,17 @@ embossing_kernel = np.array([
     [0, 1, 2]
 ])
 
+# for interested people https://en.wikipedia.org/wiki/Roberts_cross
+roberts_cross_1_kernel = np.array([
+    [1, 0],
+    [0, -1],
+])
+
+roberts_cross_2_kernel = np.array([
+    [0, 1],
+    [-1, 0],
+])
+
 filters = {
     'Identity': identity_kernel,
     'Sharpening': sharpening_kernel,

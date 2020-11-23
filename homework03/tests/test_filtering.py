@@ -26,6 +26,11 @@ def image_gray_edge_detection():
     return read_image('tests/lenna_gray_edge_detection.png')
 
 
+@fixture
+def image_roberts_cross():
+    return read_image('tests/lenna_roberts_cross.png')
+
+
 def test_identity_filter(image):
     assert_equal(image, apply_filter(image, identity_kernel))
 
@@ -36,3 +41,9 @@ def test_gaussian_blur(image, image_gaussian_blur):
 
 def test_gray_edge_detection(image_gray, image_gray_edge_detection):
     assert_equal(apply_filter(image_gray, edge_detection_kernel), image_gray_edge_detection)
+
+
+def test_roberts_cross_operator(image_gray, image_roberts_cross):
+    assert_equal(
+        apply_filter(apply_filter(image_gray, roberts_cross_1_kernel), roberts_cross_2_kernel),
+        image_roberts_cross)
