@@ -14,6 +14,7 @@ stages:
   - test-private
   - validate
 
+
 test-homework01:
   stage: test
   tags:
@@ -96,16 +97,49 @@ validate-homework02:
     - test-homework02-private
   coverage: '/PASSED_PERCENT=\d+.\d+\%/'
     
+
 test-homework03:
   stage: test
   tags:
     - bi-pyt-assignment
   script:
     - cd homework03
-    - "gitlab-runner-secrets verify-file-signatures test_*.py"
-    - pytest -c /etc/config/pytest.ini 
+    - "gitlab-runner-secrets verify-file-signatures tests/*.py tests/*.png"
+    - sudo -u nobody pytest -c /etc/config/pytest.ini tests/test_filtering.py
   only:
     - homework03
+
+test-homework03-private:
+  stage: test-private
+  tags:
+    - bi-pyt-assignment-private
+  script:
+    - "gitlab-runner-secrets verify-file-signatures tests/*.png"
+    - sudo -u nobody pytest -c /etc/config/pytest.ini -v --tb=no --no-summary -rN tests/test_filtering_private.py
+    - sleep 10
+  only:
+    - homework03
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - homework03/.test_log.en1
+
+validate-homework03:
+  stage: validate
+  variables:
+    ASSIGNMENT_DEADLINE: "2020-11-29T23:59:59"
+  tags:
+    - bi-pyt-assignment-validate
+  script:
+    - cat classification_log.txt
+    - stat before_deadline >/dev/null 2>&1
+  only:
+    - homework03
+  dependencies:
+    - test-homework03-private
+  coverage: '/PASSED_PERCENT=\d+.\d+\%/'
+
 
 test-homework04:
   stage: test
@@ -119,4 +153,4 @@ test-homework04:
     - homework04
 
 before_script:
-  - pip install pytest numpy pillow ipython pandas matplotlib >/dev/null
+  - pip install pytest pytest-timeout numpy pillow ipython pandas matplotlib >/dev/null
