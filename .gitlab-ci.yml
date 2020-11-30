@@ -147,10 +147,41 @@ test-homework04:
     - bi-pyt-assignment
   script:
     - cd homework04
-    - "gitlab-runner-secrets verify-file-signatures test_*.py"
-    - pytest -c /etc/config/pytest.ini 
+    - "gitlab-runner-secrets verify-file-signatures tests/*.py data/*.csv"
+    - sudo -u nobody pytest -c /etc/config/pytest.ini tests/test_analysis.py
   only:
     - homework04
+
+test-homework04-private:
+  stage: test-private
+  tags:
+    - bi-pyt-assignment-private
+  script:
+    - sudo -u nobody pytest -c /etc/config/pytest.ini -v --tb=no --no-summary -rN tests/test_analysis_private.py
+    - sleep 10
+  only:
+    - homework04
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - homework04/.test_log.en1
+
+validate-homework04:
+  stage: validate
+  variables:
+    ASSIGNMENT_DEADLINE: "2020-12-13T23:59:59"
+  tags:
+    - bi-pyt-assignment-validate
+  script:
+    - cat classification_log.txt
+    - stat before_deadline >/dev/null 2>&1
+  only:
+    - homework04
+  dependencies:
+    - test-homework04-private
+  coverage: '/PASSED_PERCENT=\d+.\d+\%/'
+
 
 before_script:
   - pip install pytest pytest-timeout numpy pillow ipython pandas matplotlib >/dev/null

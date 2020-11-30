@@ -1,0 +1,11 @@
+name: bipyt
+channels:
+- conda-forge
+dependencies:
+- python=>3.6
+- jupyter
+- numpy
+- pandas
+- matplotlib
+- pillow
+- pytest
