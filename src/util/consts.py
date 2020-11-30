@@ -1,4 +1,5 @@
-uiConsts = {  # Consts used in user interface.
+"""Consts used in user interface."""
+uiConsts = {
     "ApplicationMinWidth": 800,
     "ApplicationMinHeight": 600,
     "ToolbarPadding": 8,
@@ -51,7 +52,7 @@ uiConsts = {  # Consts used in user interface.
     "SettingsGSLevelTooltip": "Enter the sequence of symbols from darkest to lightest. "
                               "Your ASCII art will be shown by these symbols. "
                               "(Leave the field empty to use the default grayscale level)",
-    "AddImageDialogRequiredTootlip": "Required field",
+    "AddImageDialogRequiredTooltip": "Required field",
     "SliderTooltip": "Art size",
     "AnimationDuration": "Animation duration",
     "SupportedImageFormats": "*.pgm *.ppm *.jpg *.jpeg *.png",
@@ -72,7 +73,8 @@ uiConsts = {  # Consts used in user interface.
     "SliderColor": "#00675b"
 }
 
-imageConsts = {  # Consts used in image algorithms.
+"""Consts used in image algorithms."""
+imageConsts = {
     "EmbossKernel": [
         [-2, -1, 0],
         [-1, 1, 1],

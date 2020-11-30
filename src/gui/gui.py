@@ -235,7 +235,7 @@ class Gui(QObject):
     def get_current_art_list_index(self) -> int:
         """
         Returns:
-            Index from art_list of currently drawed ASCII art.
+            Index from art_list of currently drawn ASCII art.
         """
 
         return int(self.__get_property(self.__art_list, "currentIndex").read())
@@ -364,7 +364,7 @@ class Gui(QObject):
     @Slot(str)
     def __apply_grayscale(self, new_grayscale: str) -> None:
         """
-        Qt slot for applying a new grascale level.
+        Qt slot for applying a new grayscale level.
 
         Args:
             new_grayscale: str
@@ -455,7 +455,7 @@ class Gui(QObject):
     @Slot(int)
     def __art_list_change_index(self, index: int) -> None:
         """
-        Qt slot for changing currently drawed ASCII art.
+        Qt slot for changing currently drawn ASCII art.
 
         Args:
             index: int

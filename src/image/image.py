@@ -10,31 +10,6 @@ from imageio import imread
 from src.util import consts
 
 
-def normalize_uint8(func: Callable[[Any], np.ndarray]):
-    """
-    Decorator for image data normalization.
-
-    Accepts NumPy array from func and safely (without overflow)
-    truncates it's values so they fits in uint8 type.
-
-    Args:
-        func: Callable[[Any], np.ndarray]
-            Function returning NumPy array.
-
-    Returns:
-        Truncated NumPy array.
-    """
-
-    @wraps(func)
-    def wrapper(*args) -> np.ndarray:
-        data = func(*args)
-        data[data < 0] = 0
-        data[data > 255] = 255
-        return data.astype(np.uint8)
-
-    return wrapper
-
-
 def format_output_ascii(func: Callable[[Any], np.chararray]):
     """
     Decorator for formatting ASCII art output.
@@ -81,7 +56,7 @@ class Image:
             Flag, which indicates if emboss effect is applied.
         grayscale_level: str
             Range of symbols from darkest to lightest,
-            whiches used for ASCII convertation.
+            which used for ASCII conversion.
         __width: int
             Width of image (in pixels count).
         __height: int
@@ -130,7 +105,7 @@ class Image:
         Reads image from path.
 
         Gets it's width, height and color space.
-        Optionally truncates it's aplha channel.
+        Optionally truncates it's alpha channel.
 
         Returns:
             None.
@@ -287,7 +262,6 @@ class Image:
         return 255 - data
 
     @staticmethod
-    @normalize_uint8
     def __contrast(data: np.ndarray) -> np.ndarray:
         """
         Applies contrast effect.
@@ -304,7 +278,7 @@ class Image:
         factor = ((259.0 * (contrast_level + 255.0))
                   / (255.0 * (259.0 - contrast_level)))
         non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
-        return non_trunc_contrasted
+        return np.clip(non_trunc_contrasted, 0, 255).astype(np.uint8)
 
     def __sharpen(self, data: np.ndarray) -> np.ndarray:
         """
@@ -337,7 +311,6 @@ class Image:
         return self.__compute_kernel(data, emboss_kernel)
 
     @staticmethod
-    @normalize_uint8
     def __compute_kernel(data: np.ndarray, kernel: np.ndarray) -> np.ndarray:
         """
         Helper function for computing sharpen (image kernel).
@@ -370,7 +343,7 @@ class Image:
         kernelized = np.real(
             fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel))
         )
-        return kernelized
+        return np.clip(kernelized, 0, 255).astype(np.uint8)
 
     @staticmethod
     def __rgb_to_gray(data: np.ndarray) -> np.ndarray:

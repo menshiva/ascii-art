@@ -43,7 +43,7 @@ Dialog {
                         sourceSize.height: Consts.DialogHelpImageSize
                         ToolTip.visible: addMa1.containsMouse
                         ToolTip.delay: Consts.TooltipDelay
-                        ToolTip.text: Consts.AddImageDialogRequiredTootlip
+                        ToolTip.text: Consts.AddImageDialogRequiredTooltip
 
                         MouseArea {
                             id: addMa1
@@ -81,7 +81,7 @@ Dialog {
                         sourceSize.height: Consts.DialogHelpImageSize
                         ToolTip.visible: addMa2.containsMouse
                         ToolTip.delay: Consts.TooltipDelay
-                        ToolTip.text: Consts.AddImageDialogRequiredTootlip
+                        ToolTip.text: Consts.AddImageDialogRequiredTooltip
 
                         MouseArea {
                             id: addMa2
