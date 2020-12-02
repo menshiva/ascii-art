@@ -1,8 +1,0 @@
-Řádka se čtyřmi slovy.
-Tahle řádka má slov pět.
-        
-Další řádka, tentokrát se šesti slovy.
-A jiná, kde těch slov je sedm.
- 
-A potřebujeme znovu pět slov.
-Co si takhle zopakovat slov šest.

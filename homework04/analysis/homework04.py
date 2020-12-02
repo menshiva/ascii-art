@@ -16,12 +16,12 @@ The provided dataset contains the following attributes:
  'SibSp' - # siblings/spouses on board,
  'Survived' - 0 = died, 1 = survived,
  'Embarked' - boarding port C = Cherbourg, Q = Queenstown, S = Southampton,
-'Cabin' - cabin number
+ 'Cabin' - cabin number
  'Ticket' - ticket number
 """
 
+import numpy as np
 import pandas as pd
-import numpy
 
 
 def load_dataset(train_file_path, test_file_path):
@@ -42,8 +42,17 @@ def load_dataset(train_file_path, test_file_path):
     The return value of the function is processed DataFrame.
     """
 
-    # Implement your own solution
-    pass
+    train_data = pd.read_csv(train_file_path)
+    test_data = pd.read_csv(test_file_path)
+    train_data["Label"] = "Train"
+    test_data["Label"] = "Test"
+
+    result_data = pd.concat([train_data, test_data], ignore_index=True)
+    del result_data["Ticket"]
+    del result_data["Embarked"]
+    del result_data["Cabin"]
+
+    return result_data
 
 
 def get_missing_values(df: pd.DataFrame) -> pd.DataFrame:
@@ -71,8 +80,11 @@ def get_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     "Column2"  |   0     |    0
     """
 
-    # Implement your own solution
-    pass
+    total_missing = df.isnull().sum()
+    percent_missing = total_missing / len(df) * 100
+
+    result_frame = pd.DataFrame({"Total": total_missing, "Percent": percent_missing})
+    return result_frame.sort_values("Total", ascending=False)
 
 
 def substitute_missing_values(df: pd.DataFrame) -> pd.DataFrame:
@@ -87,8 +99,11 @@ def substitute_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     Do not to modify given DataFrame but create a copy of it.
     """
 
-    # Implement your own solution
-    pass
+    result_frame = df.copy()
+    result_frame["Age"] = result_frame["Age"].fillna(np.nanmean(df["Age"].to_numpy()))
+    result_frame["Fare"] = result_frame["Fare"].fillna(15)
+
+    return result_frame
 
 
 def get_correlation(df: pd.DataFrame) -> float:
@@ -105,12 +120,10 @@ def get_correlation(df: pd.DataFrame) -> float:
     relationship, 1 indicates strong relationship.
     """
 
-    # Implement your own solution
-    pass
+    return df["Age"].corr(df["Fare"])
 
 
-def get_survived_per_class(df: pd.DataFrame,
-                           group_by_column_name: str) -> pd.DataFrame:
+def get_survived_per_class(df: pd.DataFrame, group_by_column_name: str) -> pd.DataFrame:
     """
     We want to know how big was the chance of survival for different groups of
     passengers (e.g. for different sexes, classes, etc.). Write a function
@@ -130,8 +143,14 @@ def get_survived_per_class(df: pd.DataFrame,
 
     """
 
-    # Implement your own solution
-    pass
+    unique_values = df[group_by_column_name].unique()
+    coefficients = [
+        np.nanmean(df[df[group_by_column_name] == value]["Survived"].to_numpy())
+        for value in unique_values
+    ]
+
+    result_frame = pd.DataFrame({"Survived": coefficients}, unique_values)
+    return result_frame.round(2).sort_values("Survived", ascending=False).squeeze()
 
 
 def get_outliers(df: pd.DataFrame) -> (int, str):
@@ -153,8 +172,12 @@ def get_outliers(df: pd.DataFrame) -> (int, str):
     fare ticket price.
     """
 
-    # Implement your own solution
-    pass
+    q1 = df["Fare"].quantile(0.25)
+    q3 = df["Fare"].quantile(0.75)
+    iqr = q3 - q1
+    mask = df[df["Fare"].between(q1 - 1.5 * iqr, q3 + 1.5 * iqr)]
+
+    return df.shape[0] - mask.shape[0] - 1, df[~df.isin(mask)].dropna()
 
 
 def create_new_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -178,12 +201,15 @@ def create_new_features(df: pd.DataFrame) -> pd.DataFrame:
     Do not modify original DataFrame.
     """
 
-    # Implement your own solution
-    pass
+    result_frame = df.copy()
+    result_frame["Fare_scaled"] = (df["Fare"] - df["Fare"].mean()) / df["Fare"].std()
+    result_frame["Age_log"] = np.log(df["Age"].to_numpy())
+    result_frame["Sex"] = np.where(result_frame["Sex"].to_numpy() == "male", 0, 1)
+
+    return result_frame
 
 
-def determine_survival(df: pd.DataFrame, n_interval: int, age: float,
-                       sex: str) -> float:
+def determine_survival(df: pd.DataFrame, n_interval: int, age: float, sex: str) -> float:
     """
     Determine the probability of survival of a person specified by age and sex.
 
@@ -209,5 +235,24 @@ def determine_survival(df: pd.DataFrame, n_interval: int, age: float,
     NA value.
     """
 
-    # Implement your own solution
-    pass
+    df_normal = df.copy()
+    df_normal["Age"] = df_normal["Age"].fillna(np.nanmean(df["Age"].to_numpy()))
+    df_normal["AgeInterval"] = pd.cut(df_normal["Age"], n_interval).to_numpy()
+
+    categorized_frame = df_normal[["AgeInterval", "Sex"]].drop_duplicates(ignore_index=True)
+    categorized_frame["SP"] = categorized_frame.apply(lambda row: np.nanmean(
+        df_normal[
+            (df_normal["Sex"] == row["Sex"])
+            & (df_normal["AgeInterval"] == row["AgeInterval"])
+        ]["Survived"].to_numpy()
+    ), axis=1)
+
+    interval = df_normal.loc[(df_normal["Age"] == age) & (df_normal["Sex"] == sex)]["AgeInterval"]
+    if interval.empty:
+        return np.NaN
+    interval = interval.iloc[0]
+
+    return categorized_frame[
+              (categorized_frame["AgeInterval"] == interval)
+              & (categorized_frame["Sex"] == sex)
+    ]["SP"].item()
