@@ -39,6 +39,7 @@ Minimal requirements:
 * NumPy 1.19.2
 * PySide2 5.15.1
 * imageio 2.9.0
+* pytest 6.2.1
 
 ## Build 🚀
 
@@ -66,17 +67,24 @@ Use this command to run ASCII Art:
 $ python3 app.py
 ```
 
+#### Test application
+Use this command for ASCII Art testing:
+```bash
+$ pytest
+```
+
+
 ## How to Use 📃
 
 #### Basics
 1) [Build and run](#build-) application
-2) Press the _menu_ button in toolbar to open image list drawer
+2) Press the _menu_ button in the toolbar to open image list drawer
 3) Press the _Add image_ button to add image
 4) In popup dialog:
    - Fill the _Art name_ box **(required)**
-   - Choose path to image from file browser via _Browse_ button **(required)**
+   - Choose a path to image from file browser via _Browse_ button **(required)**
    - Choose effects to apply on your art _(optional)_
-5) Press the _Add_ button and wait for image to convert
+5) Press the _Add_ button and wait for the image to convert
 6) **Enjoy** your ASCII art!
 
 #### Image properties
@@ -84,7 +92,7 @@ $ python3 app.py
   1) Press the three dots below the needed image 
   2) Click on _Properties_ button
   3) Apply your changes
-  4) Press the _Save_ button and wait for image to re-convert
+  4) Press the _Save_ button and wait for the image to re-convert
 * To remove image from list:
   1) Press the three dots below the needed image
   2) Press the _Remove image_ button
@@ -96,8 +104,8 @@ $ python3 app.py
 #### Animation
 * To enable this function you need to add **at least 2 images**
 * Animation controls:
-  1) Click on _Play animation_ button in toolbar to start animation
-  2) Click on _Stop animation_ button in toolbar to stop animation
+  1) Click on _Play animation_ button in a toolbar to start animation
+  2) Click on _Stop animation_ button in a toolbar to stop animation
 
 #### Settings
 1) Press the three dots in toolbar 
@@ -134,7 +142,7 @@ $ sudo apt-get install libxcb-xinerama0
 * [imageio](https://imageio.github.io/)
 
 #### Used algorithms
-* [Image scailing algorithm](https://en.wikipedia.org/wiki/Image_scaling#Nearest-neighbor_interpolation)
+* [Image scaling algorithm](https://en.wikipedia.org/wiki/Image_scaling#Nearest-neighbor_interpolation)
 * [RGB to grayscale preserving luminance algorithm](https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale)
 * [Contrast effect algorithm](https://en.wikipedia.org/wiki/Contrast_(vision))
 * Convolution (image kernel):
