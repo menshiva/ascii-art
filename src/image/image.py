@@ -189,6 +189,38 @@ class Image:
 
         return self.__image_data
 
+    def get_width(self) -> int:
+        """
+        Returns:
+            __width.
+        """
+
+        return self.__width
+
+    def get_height(self) -> int:
+        """
+        Returns:
+            __height.
+        """
+
+        return self.__height
+
+    def get_color_space(self) -> int:
+        """
+        Returns:
+            _color_space.
+        """
+
+        return self.__color_space
+
+    def set_effect_flags(self,
+                         contrast: bool, negative: bool,
+                         sharpen: bool, emboss: bool) -> None:
+        self.is_contrast = contrast
+        self.is_negative = negative
+        self.is_sharpen = sharpen
+        self.is_emboss = emboss
+
     def __get_ascii_data(self) -> np.chararray:
         """
         Converts image data to ASCII art.

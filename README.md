@@ -43,18 +43,6 @@ Minimal requirements:
 
 ## Build 🚀
 
-#### Download
-Download this project manually with download button or run from your command line:
-```bash
-$ git clone --single-branch --branch ascii-art https://gitlab.fit.cvut.cz/BI-PYT/b201/menshiva.git
-```
-
-#### Change working directory
-Change your working directory with command:
-```bash
-$ cd menshiva
-```
-
 #### Install dependencies
 Run this command to install all necessary dependencies:
 ```bash
@@ -67,10 +55,10 @@ Use this command to run ASCII Art:
 $ python3 app.py
 ```
 
-#### Test application
+#### Test application (optional)
 Use this command for ASCII Art testing:
 ```bash
-$ pytest
+$ pytest -v
 ```
 
 
