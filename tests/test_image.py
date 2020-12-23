@@ -1,10 +1,10 @@
 import os
 import sys
 
-from numpy.testing import assert_equal
 import numpy as np
-from imageio import imread, imwrite
 import pytest
+from imageio import imread
+from numpy.testing import assert_equal
 
 from src.util import consts
 
@@ -23,7 +23,7 @@ def lenna():
     )
 
 
-def test_image_info(lenna):
+def test_info(lenna):
     assert lenna.name == "Lenna"
     assert lenna.get_width() == lenna.get_height() == 512
     assert lenna.get_color_space() == 3

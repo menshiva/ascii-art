@@ -2,9 +2,9 @@ from __future__ import annotations
 import os
 import sys
 import time
+from pathlib import Path
 from threading import Thread, Event
 from typing import Callable, Tuple
-from pathlib import Path
 
 from PySide2.QtCore import Qt, QObject, Slot, Signal
 from PySide2.QtGui import QFontMetrics

@@ -1,11 +1,12 @@
 from __future__ import annotations
-from functools import wraps
+
 from dataclasses import dataclass, field
+from functools import wraps
 from typing import Tuple, Callable, Any
 
 import numpy as np
-from numpy import fft
 from imageio import imread
+from numpy import fft
 
 from src.util import consts
 

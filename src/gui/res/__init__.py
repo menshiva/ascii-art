@@ -2,8 +2,8 @@ import os
 import sys
 from pathlib import Path
 
-from PySide2.QtGui import QIcon
 from PySide2.QtCore import QSize
+from PySide2.QtGui import QIcon
 
 
 def get_app_icon() -> QIcon:
