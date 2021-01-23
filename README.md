@@ -3,7 +3,6 @@
         <img src="img/logo.png" alt="ASCII Art" width="192">
         <br><br>ASCII Art<br>
     </h1>
-    <h4 align="center">A minimal desktop app for image to ASCII art conversion.</h4>
     <p align="center">
         <a href="#key-features-">Key Features 🍪</a> |
         <a href="#dependencies-">Dependencies 🧬</a> |
@@ -34,11 +33,11 @@
 
 ## Dependencies 🧬
 
-Minimal requirements:
+Recommended requirements:
 
 * Python 3.8.1
-* NumPy 1.19.2
-* PySide2 5.15.1
+* NumPy 1.19.5
+* PySide2 5.15.2
 * imageio 2.9.0
 * pytest 6.2.1
 
@@ -147,6 +146,7 @@ $ sudo apt-get install libxcb-xinerama0
 
 #### Used algorithms
 
+* If you are interested in program's logic and algorithms, read [about.pdf](https://github.com/menshiva/ascii-art/blob/ascii-art/about.pdf)
 * [Image scaling algorithm](https://en.wikipedia.org/wiki/Image_scaling#Nearest-neighbor_interpolation)
 * [RGB to grayscale preserving luminance algorithm](https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale)
 * [Contrast effect algorithm](https://en.wikipedia.org/wiki/Contrast_(vision))
@@ -163,3 +163,21 @@ $ sudo apt-get install libxcb-xinerama0
 #### Author
 
 * Ivan Menshikov (menshiva@fit.cvut.cz)
+
+#### License
+
+```
+Copyright 2021 Ivan Menshikov
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
