@@ -38,7 +38,7 @@ class Image:
     """
     Data class for all supported image formats.
 
-    This class holds all data, needed for raw format without any compression.
+    This class holds all raw format data without any compression.
     Operates with image in common way, such as:
     read from path, convert to ASCII, add effect etc.
 
@@ -56,8 +56,8 @@ class Image:
         is_emboss: bool
             Flag, which indicates if emboss effect is applied.
         grayscale_level: str
-            Range of symbols from darkest to lightest,
-            which used for ASCII conversion.
+            Range of symbols from darkest to lightest
+            used for ASCII conversion.
         __width: int
             Width of image (in pixels count).
         __height: int
@@ -65,7 +65,7 @@ class Image:
         __color_space: int
             Image's channels count.
         __image_data_raw: np.ndarray
-            List of color components values, which were read from image file.
+            List of color components values, read from image file.
         __image_data: np.ndarray
             Copy of __image_data_raw, which has effects
             applied and converted to grayscale.
@@ -156,9 +156,9 @@ class Image:
     @format_output_ascii
     def get_ascii_art(self, win_width: int, win_height: int) -> np.chararray:
         """
-        If win_width and win_height aren't equal to __cached_ascii_data -
-        computes ASCII art with size, based on window's and image's sizes, and
-        saves it in __cached_ascii_data (performance improvement).
+        If win_width and win_height aren't equal to cached ascii data -
+        it computes ASCII art with size, based on window's and image's sizes, and
+        saves it in cached ascii data (performance improvement).
 
         Args:
             win_width: int
@@ -167,7 +167,7 @@ class Image:
                 Height of window, in which art will be drawn.
 
         Returns:
-            __cached_ascii_data.
+            Cached ascii data.
         """
 
         (ascii_w, ascii_h) = self.__compute_art_size(win_width, win_height)
@@ -185,7 +185,7 @@ class Image:
     def get_image_data(self) -> np.ndarray:
         """
         Returns:
-            __image_data.
+            Image data as NumPy array.
         """
 
         return self.__image_data
@@ -193,7 +193,7 @@ class Image:
     def get_width(self) -> int:
         """
         Returns:
-            __width.
+            Image width.
         """
 
         return self.__width
@@ -201,7 +201,7 @@ class Image:
     def get_height(self) -> int:
         """
         Returns:
-            __height.
+            Image height.
         """
 
         return self.__height
@@ -209,7 +209,7 @@ class Image:
     def get_color_space(self) -> int:
         """
         Returns:
-            _color_space.
+            Image color space.
         """
 
         return self.__color_space
@@ -231,7 +231,7 @@ class Image:
         Uses NumPy vectorization (performance improvement).
 
         Returns:
-            NumPy char array of __image_data converted to ASCII art.
+            NumPy char array of image data converted to ASCII art.
         """
 
         grayscale_indices = (
@@ -239,6 +239,7 @@ class Image:
                 / 255.0
                 * (len(self.grayscale_level) - 1)
         ).astype(np.uint8)
+        # vectorized function (performance improvement)
         apply_mask_vectorized = np.vectorize(self.__apply_grayscale_mask)
         return apply_mask_vectorized(grayscale_indices, self.grayscale_level)
 
@@ -346,10 +347,10 @@ class Image:
     @staticmethod
     def __compute_kernel(data: np.ndarray, kernel: np.ndarray) -> np.ndarray:
         """
-        Helper function for computing sharpen (image kernel).
+        Helper function for computing image kernel.
 
-        Computes image kernel using discrete Fourier Transform
-        and applies sharpen kernel-based (sharpen, emboss etc.) effects.
+        Uses discrete Fourier Transform
+        and applies kernel-based (sharpen, emboss etc.) effects.
 
         Args:
             data: np.ndarray
@@ -383,7 +384,7 @@ class Image:
         """
         Converts RGB image to grayscale image.
 
-        Function uses perceptual luminance-preserving conversion algorithm
+        Uses perceptual luminance-preserving conversion algorithm
         so grayscale image would preserve brightness measure
         (much better for ASCII representation).
 
@@ -411,8 +412,6 @@ class Image:
         """
         Helper function for mapping grayscale level symbol
         to image data values' brightness.
-
-        Should be used with NumPy vectorization (performance improvement).
 
         Args:
             index: int

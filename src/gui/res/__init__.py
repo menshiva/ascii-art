@@ -22,6 +22,9 @@ def get_app_icon() -> QIcon:
 
 
 def get_main_qml_path() -> str:
-    """Returns path to main GUI file."""
+    """
+    Returns:
+        Path to main GUI file.
+    """
 
     return os.path.join(sys.path[0], "src/gui/res/layout/main.qml")

@@ -11,16 +11,15 @@ class ArtFactory(QAbstractListModel):
     Image controller.
 
     This is a general factory class for images.
-    Stores all loaded images and can control
-    (add, update, remove, count etc.) them.
-    Manages connection between main program logic, loaded images and GUI.
+    Stores and controls all loaded images (add, update, remove, count etc.).
+    Manages the connection between main program logic, loaded images and GUI.
     Inherits QAbstractListModel class for connection with GUI.
 
     Attributes:
         __NAME_ROLE: Final[int]
-            Private constant for defining image's name attribute for GUI.
+            Private constant for defining a name of the image.
         __IMAGE_ROLE: Final[int]
-            Private constant for defining image's path attribute for GUI.
+            Private constant for defining a path of the image.
         __arts: List[Image]
             All loaded images.
         loaded_image: Image or None
@@ -33,7 +32,7 @@ class ArtFactory(QAbstractListModel):
     loaded_image: Image or None
 
     def __init__(self) -> None:
-        """Inits ArtFactory."""
+        """Factory initialization."""
 
         super().__init__()
         self.__NAME_ROLE = Qt.DisplayRole
@@ -47,10 +46,10 @@ class ArtFactory(QAbstractListModel):
 
         Args:
             new_image: Image
-                New image to add.
+                Image to be added.
 
         Returns:
-            Current ArtFactory instance.
+            ArtFactory instance.
         """
 
         self.beginInsertRows(QModelIndex(), 0, 0)
@@ -82,10 +81,10 @@ class ArtFactory(QAbstractListModel):
 
         Args:
             index: int
-                Index of image to get.
+                Index of the image to get.
 
         Returns:
-            Image at index.
+            Image at the given index.
         """
 
         return self.__arts[index]
@@ -96,7 +95,7 @@ class ArtFactory(QAbstractListModel):
 
         Args:
             index: int
-                Index of image to remove.
+                Index of the image to remove.
 
         Returns:
             None.
@@ -111,7 +110,7 @@ class ArtFactory(QAbstractListModel):
         x.__len__() <==> len(x)
 
         Returns:
-            Number of added images.
+            Total number of added images.
         """
 
         return len(self.__arts)
@@ -121,7 +120,7 @@ class ArtFactory(QAbstractListModel):
         x.__iter__() <==> iter(x)
 
         Returns:
-            Iterator of all added images.
+            Iterator for all the added images.
         """
 
         return iter(self.__arts)
@@ -135,7 +134,7 @@ class ArtFactory(QAbstractListModel):
                 Index to check.
 
         Returns:
-            If image at index exists.
+            If image exists at the given index.
         """
 
         return len(self.__arts) > index
@@ -151,7 +150,7 @@ class ArtFactory(QAbstractListModel):
                 List item's role.
 
         Returns:
-            Data stored under the role for the item by the index.
+            Data taken from given role and index of the item.
         """
 
         row = index.row()
@@ -179,7 +178,7 @@ class ArtFactory(QAbstractListModel):
         Redefined method from QAbstractListModel.
 
         Returns:
-            A dict mapping image attributes to the corresponding roles.
+            A dictionary mapping image attributes to the corresponding roles.
         """
 
         return {

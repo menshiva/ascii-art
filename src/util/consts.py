@@ -1,4 +1,4 @@
-"""Consts used in user interface."""
+"""Constant values used in user interface."""
 uiConsts = {
     "ApplicationMinWidth": 800,
     "ApplicationMinHeight": 600,
@@ -73,7 +73,7 @@ uiConsts = {
     "SliderColor": "#00675b"
 }
 
-"""Consts used in image algorithms."""
+"""Constant values used in image processing algorithms."""
 imageConsts = {
     "EmbossKernel": [
         [-2, -1, 0],

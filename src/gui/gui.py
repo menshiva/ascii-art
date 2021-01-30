@@ -23,7 +23,7 @@ class Gui(QObject):
     Graphical user interface.
 
     This class provides user interface logic.
-    It stores and controls all views and windows.
+    Stores and controls all views and windows.
     Manages connection between main program logic
     and user interface interaction.
     Uses .qml file in gui/res for UI visualisation.
@@ -33,54 +33,53 @@ class Gui(QObject):
             Loaded images.
         __image_thread_signal: Signal[int]
             Qt signal.
-            Activates on image processed in background thread.
+            Activates if image is processed in background thread.
         __animation_thread_signal: Signal[int]
             Qt signal.
-            Activates on animation background thread changes current image.
+            Activates if animation background thread changes current image.
         __animation_thread: Thread
             Animation background thread.
         __animation_stop_event: Event
-            Stop animation background thread event.
+            Animation background thread stop event.
 
         __app: QApplication
             Holds Qt application instance for GUI.
         __engine: QQmlApplicationEngine
             Holds Qt GUI properties and user interaction logic with __app.
         __open_file_dialog: QFileDialog
-            File browser for choosing path to new image to add.
+            File browser for choosing path to image.
         __root: QObject
             Root container of main window.
         __settings: QObject
-            Stores GUI data (such as theme, window size etc.)
+            Stores GUI data (theme, window size etc.)
             for the next app launch.
         __art_layout: QObject
             Prints ASCII art.
         __art_list: QObject
-            List view with all loaded images.
+            List view containing all loaded images.
         __art_size_slider: QObject
             Slider that controls ASCII art symbol size.
         __play_anim_button: QObject
-            Button for playing animation (starting animation thread).
+            Play animation button.
         __stop_anim_Button: QObject
-            Button for stopping animation (kills animation thread).
+            Stop animation button.
         image_dialog: QObject
             Image popup dialog for adding a new image.
 
         on_open_image_dialog: Callable[[Gui, int], None]
-            image_dialog opened callback function.
+            Acivates if image_dialog is opened.
         on_preview_art: Callable[[Gui, Image], None]
-            Update an image that currently adding (but not added yet)
-            callback function.
+            Activates if currently adding (but not added yet) image is updating.
         on_image_processed: Callable[[Gui, int], None]
-            Image converted to ASCII art callback function.
+            Activates if image is converted to ASCII art.
         on_add_edit_art: Callable[[Gui, int, str], None]
-            Image add / edit callback function.
+            Activates if image is added / edited.
         on_draw_art: Callable[[Gui, int], None]
-            Draw ASCII art callback function.
+            Activates if ASCII art is drawn.
         on_remove_art: Callable[[Gui, int], None]
-            Remove image callback function.
+            Activates if image is removed.
         on_apply_grayscale: Callable[[Gui, str], None]
-            Update grayscale for all images callback function.
+            Activates if grayscale level is updated for all images.
     """
 
     art_factory: ArtFactory
@@ -166,12 +165,12 @@ class Gui(QObject):
 
     def process_image_background(self, index: int, image: Image) -> None:
         """
-        Creates new background thread for image to ASCII art converting.
+        Creates a new background thread for image to ASCII art conversion.
 
         Args:
             index: int
                 Index of image to convert.
-                If image is not added, index should be set to -1.
+                If image is not added to list yet, index should be set to -1.
             image: Image
                 Image to convert.
 
@@ -235,7 +234,7 @@ class Gui(QObject):
     def get_current_art_list_index(self) -> int:
         """
         Returns:
-            Index from art_list of currently drawn ASCII art.
+            Currently drawn ASCII art index from art_list.
         """
 
         return int(self.__get_property(self.__art_list, "currentIndex").read())
@@ -258,7 +257,7 @@ class Gui(QObject):
         Args:
             index: int
                 Index of opened image.
-                If image is not added, index should be set to -1.
+                If image is not added to list yet, index should be set to -1.
 
         Returns:
             None.
@@ -304,12 +303,12 @@ class Gui(QObject):
     @Slot(int)
     def __on_image_processed(self, index: int) -> None:
         """
-        Qt slot for image converted to ASCII art in background thread.
+        Qt slot for image to ASCII art conversion in background thread.
 
         Args:
             index: int
                 Index of converted image.
-                If image is not added, index should be set to -1.
+                If image is not added to list yet, index should be set to -1.
 
         Returns:
             None.
@@ -325,7 +324,7 @@ class Gui(QObject):
         Args:
             index: int
                 Index of converted image.
-                If image is not added, index should be set to -1.
+                If image is not added to list yet, index should be set to -1.
             name: str
                 Name of converted image.
 
@@ -338,7 +337,7 @@ class Gui(QObject):
     @Slot()
     def __draw_art(self) -> None:
         """
-        Qt slot for drawing art.
+        Qt slot for drawing an art.
 
         Returns:
             None.
@@ -369,7 +368,7 @@ class Gui(QObject):
         Args:
             new_grayscale: str
                 New grayscale level.
-                Should be empty str for default grayscale level.
+                Should be empty string for default grayscale level.
 
         Returns:
             None.
@@ -384,7 +383,7 @@ class Gui(QObject):
         Qt slot for opening file dialog to choose path to image file.
 
         Returns:
-            Path to image file or empty str instead.
+            Path to image file or empty string instead.
         """
 
         if self.__open_file_dialog.exec_():
@@ -396,7 +395,7 @@ class Gui(QObject):
     @Slot()
     def __start_animation(self) -> None:
         """
-        Qt slot for starting animation.
+        Qt slot for starting an animation.
 
         Returns:
             None.
@@ -411,7 +410,7 @@ class Gui(QObject):
     @Slot()
     def __stop_animation(self) -> None:
         """
-        Qt slot for stopping animation.
+        Qt slot for stopping an animation.
 
         Returns:
             None.
@@ -433,7 +432,7 @@ class Gui(QObject):
     @Slot(int)
     def __export_art(self, index: int) -> None:
         """
-        Qt slot for opening file dialog to choose path to text file
+        Qt slot for opening file dialog to choose text file's path
         to export ASCII art into.
 
         Args:
@@ -512,7 +511,7 @@ class Gui(QObject):
             duration: float
                 Delay between animation frames (in seconds).
             signal: Signal[int]
-                Qt signal accepting image index which need to be drawn.
+                Qt signal accepting image index when it needs to be drawn.
             stop_event: Event
                 Event for thread killing.
 
@@ -533,17 +532,16 @@ class Gui(QObject):
         """
         Function used in image converting background thread.
 
-        Sends index of converted image to signal.
-        Note that index is -1 if image wasn't already added.
+        Sends converted image index to signal.
 
         Args:
             index: int
                 Image's index in list.
-                If image is not added, index should be set to -1.
+                If image is not added to list yet, index should be set to -1.
             image: Image
                 Image to convert.
             signal: Signal[int]
-                Qt signal accepting image index which was convert.
+                Qt signal accepting converted image index.
 
         Returns:
             None.
