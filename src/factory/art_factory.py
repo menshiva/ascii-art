@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import os
 from typing import List, Dict, Final, Iterator
 
 from PySide2.QtCore import Qt, QAbstractListModel, QModelIndex
@@ -156,7 +158,7 @@ class ArtFactory(QAbstractListModel):
         row = index.row()
         return {
             self.__NAME_ROLE: self.__arts[row].name,
-            self.__IMAGE_ROLE: self.__arts[row].path
+            self.__IMAGE_ROLE: f"file:{os.sep}{self.__arts[row].path}"
         }[role]
 
     def rowCount(self, parent=QModelIndex()) -> int:

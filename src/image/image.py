@@ -5,7 +5,7 @@ from functools import wraps
 from typing import Tuple, Callable, Any
 
 import numpy as np
-from imageio import imread
+from imageio.v2 import imread
 from numpy import fft
 
 from src.util import consts
@@ -105,8 +105,8 @@ class Image:
         """
         Reads image from path.
 
-        Gets it's width, height and color space.
-        Optionally truncates it's alpha channel.
+        Gets its width, height and color space.
+        Optionally truncates its alpha channel.
 
         Returns:
             None.
@@ -259,7 +259,7 @@ class Image:
                 Height of window, in which art will be drawn.
 
         Returns:
-            Pair of ASCII art's width and height.
+            A pair of ASCII art's width and height.
         """
 
         ascii_h: int
@@ -311,12 +311,12 @@ class Image:
         contrast_level = 255.0
         factor = ((259.0 * (contrast_level + 255.0))
                   / (255.0 * (259.0 - contrast_level)))
-        non_trunc_contrasted = (data.astype(np.float) - 128) * factor + 128
+        non_trunc_contrasted = (data.astype(float) - 128) * factor + 128
         return np.clip(non_trunc_contrasted, 0, 255).astype(np.uint8)
 
     def __sharpen(self, data: np.ndarray) -> np.ndarray:
         """
-        Applies sharpen effect.
+        Applies the sharpen effect.
 
         Args:
             data: np.ndarray
@@ -331,7 +331,7 @@ class Image:
 
     def __emboss(self, data: np.ndarray) -> np.ndarray:
         """
-        Applies emboss effect.
+        Applies the emboss effect.
 
         Args:
             data: np.ndarray
@@ -377,7 +377,7 @@ class Image:
         kernelized = np.real(
             fft.ifft2(fft.fft2(data) * fft.fft2(shifted_kernel))
         )
-        return np.clip(kernelized, 0, 255).astype(np.uint8)
+        return np.clip(kernelized, 0, 255).astype(np.ubyte)
 
     @staticmethod
     def __rgb_to_gray(data: np.ndarray) -> np.ndarray:
@@ -405,7 +405,7 @@ class Image:
         linear_luminance = linear @ np.array(
             consts.imageConsts["LuminanceCoefficients"]
         ).T
-        return (linear_luminance * 255).astype(np.uint8)
+        return (linear_luminance * 255).astype(np.ubyte)
 
     @staticmethod
     def __apply_grayscale_mask(index: int, grayscale_level: str) -> str:

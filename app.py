@@ -1,7 +1,7 @@
 import os
 import sys
 
-from imageio import imwrite
+from imageio.v2 import imwrite
 
 from src.factory import ArtFactory
 from src.gui import Gui
@@ -11,7 +11,7 @@ from src.image import Image
 def save_preview_tmp(preview: Image) -> str:
     tmp_path: str = os.path.join(sys.path[0], "tmp.ppm")
     imwrite(tmp_path, preview.get_image_data())
-    return tmp_path
+    return f"file:{os.sep}{tmp_path}"
 
 
 def on_open_image_dialog(gui: Gui, index: int) -> None:

@@ -3,7 +3,7 @@ import sys
 
 import numpy as np
 import pytest
-from imageio import imread
+from imageio.v2 import imread
 from numpy.testing import assert_equal
 
 from src.util import consts
