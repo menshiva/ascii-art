@@ -21,7 +21,7 @@ uiConsts = {
     "AddImageDialogPathBoxLeftMargin": 2,
     "AddImageDialogPathBoxRightMargin": 8,
     "DefaultArtSize": 10,
-    "DefaultAnimationDuration": 1.0,
+    "DefaultAnimationDuration": 0.5,
 
     "ProjectName": "ASCII Art",
     "AuthorName": "Ivan Menshikov",
